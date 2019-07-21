@@ -1,30 +1,65 @@
-import React, { useContext, useEffect, useState } from "react";
+/**
+ * @module Code
+ *
+ * TODO: Display implementation of this component?
+ */
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import Prism from "../../prism";
 import styled from "styled-components";
-import { Grid, Tooltip, Typography as MuiTypography } from "@material-ui/core";
 import { ActiveContext } from "containers/ActiveProvider";
+import { SourceContext } from "containers/SourceDrawer";
 
 type Props = {
   code: string;
-} & Omit<React.ComponentProps<typeof Tooltip>, "title">;
+  children: React.ReactElement;
+};
 
-const RootGrid = styled(Grid)`
-  white-space: pre;
-`;
+type HoverAreaProps = {
+  "data-open": boolean;
+  "data-adjust"?: number;
+  "data-width": number;
+  "data-height": number;
+  "data-top": number;
+  "data-left": number;
+  "data-bottom": number;
+  "data-right": number;
+};
 
-const CodeGrid = styled(Grid)`
-  font-family: "Inconsolata", monospace;
-  background: ${props => props.theme.palette.background.default}AA;
-  padding: 10px;
-  margin: 10px;
-  border: 1px solid ${props => props.theme.palette.background.default};
-  border-radius: 3px;
-  font-size: 0.9rem;
-  line-height: 1.2rem;
-`;
+type CodeChildrenProps = { children: React.ReactNode } & HoverAreaProps;
 
-const Typography = styled(MuiTypography)`
-  color: ${props => props.theme.palette.primary.light};
+type dimensions = {
+  height: number;
+  width: number;
+  top: number;
+  left: number;
+  bottom: number;
+  right: number;
+  // x: number;
+  // y: number;
+};
+
+const HoverArea = styled.div<HoverAreaProps>`
+  pointer-events: ${props => (props["data-open"] ? "auto" : "none")};
+  &:hover {
+    background: #aaaaaaaa;
+  }
+  top: ${props => props["data-top"]}px;
+  left: ${props => [props["data-left"]]}px;
+  bottom: ${props => props["data-bottom"]}px;
+  right: ${props => props["data-right"]}px;
+  height: ${props =>
+    props["data-height"] - (20 - (props["data-adjust"] || 0) * 2)}px;
+  width: ${props =>
+    props["data-width"] - (20 - (props["data-adjust"] || 0) * 2)}px;
+  margin: ${props => 10 - (props["data-adjust"] || 0)}px;
+  z-index: ${props =>
+    100 -
+    (props["data-adjust"] || 0) -
+    Math.max(
+      0,
+      Math.ceil(props["data-height"] / 5 / (props["data-adjust"] || 10))
+    )};
+  position: fixed;
 `;
 
 const replaceText = `import Code from "containers/Code";\n// @ts-ignore\nimport txt from "!raw-loader!./index.tsx";\n`;
@@ -67,6 +102,7 @@ const cleanCode = (code: string) => {
  * @param next
  */
 const parseStyled = (code: string, next?: number): string => {
+  const templateTag = '<span class="token string">`</span>';
   // don't count the import statement
   const initial = code.indexOf("styled-components") + 17;
   const startIndex = (typeof next === "number" ? next : initial) + 1;
@@ -77,16 +113,18 @@ const parseStyled = (code: string, next?: number): string => {
   if (styledDeclaration > -1 && templateStart > -1 && templateEnd > -1) {
     return (
       Prism.highlight(
-        code.substring(0, templateStart),
+        code.substring(0, templateStart - 1),
         Prism.languages.tsx,
         "tsx"
       ) +
+      templateTag +
       Prism.highlight(
         code.substring(templateStart, templateEnd),
         Prism.languages.css,
         "css"
       ) +
-      parseStyled(code.substring(templateEnd), templateEnd + 1)
+      templateTag +
+      parseStyled(code.substring(templateEnd + 1))
     );
   } else {
     return Prism.highlight(code, Prism.languages.tsx, "tsx");
@@ -101,7 +139,9 @@ const replaceSpan = (el: HTMLElement) => {
   const stripped = el.innerText.replace(/ /g, "");
   // arbitrary
   if (stripped.length > 10) {
-    el.outerHTML = Prism.highlight(el.innerText, Prism.languages.js, "js");
+    // console.log(el.outerHTML, el.innerText);
+    const round2 = Prism.highlight(el.innerText, Prism.languages.js, "js");
+    el.innerHTML = round2;
   }
   return el;
 };
@@ -124,27 +164,59 @@ const cleanup = (code: string) => {
   return div.innerHTML;
 };
 
-const setChildrenProps = (
-  children: React.ReactElement,
-  id: string,
-  setActive: React.Dispatch<any>
-) => ({
+const setChildrenProps = (id: string, setActive: React.Dispatch<any>) => ({
   onMouseOver: (e: React.MouseEvent) => {
     e.stopPropagation();
     setActive(id);
-  },
-  ...children.props
+  }
 });
 
+const getTreeDepth = (children: React.ReactElement, count = 0): number => {
+  let newCount = count;
+  if (children) {
+    newCount += React.Children.count(children);
+    if (children.props) {
+      newCount += getTreeDepth(children.props.children, newCount);
+    }
+  }
+  return newCount;
+};
+
+const CodeChildren = React.forwardRef(
+  (
+    { children, ...props }: CodeChildrenProps,
+    ref: React.Ref<HTMLDivElement>
+  ) => (
+    <Fragment>
+      <HoverArea ref={ref} {...props} />
+      {children}
+    </Fragment>
+  )
+);
+
+// TODO: Store formatted text by filename?
 export const Code: React.FC<Props> = ({ code, children, ...props }) => {
   // @ts-ignore
-  const fileName = children._source ? children._source.fileName : "";
-  const __html = cleanup(parseStyled(cleanCode(code)));
-  const { enabled, activeEl, setActive, addId, idLength } = useContext(
-    ActiveContext
-  );
+  const fileName = children._source
+    ? // It doesn't like me using source.
+      // @ts-ignore
+      relativeFileName(children._source.fileName)
+    : "";
+  const [html] = useState(cleanup(parseStyled(cleanCode(code))));
+  const { activeEl, setActive, addId, idLength } = useContext(ActiveContext);
+  const { open, setCode } = useContext(SourceContext);
   const [id, setId] = useState("");
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
+  const [treeDepth] = useState(getTreeDepth(children));
+  const [dimensions, setDimensions] = useState<dimensions>({
+    width: 0,
+    height: 0,
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0
+  });
+  const childRef = React.useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (!id) {
@@ -154,33 +226,51 @@ export const Code: React.FC<Props> = ({ code, children, ...props }) => {
   }, [id, setId, addId, idLength]);
 
   useEffect(() => {
-    setOpen(activeEl === id);
-  }, [activeEl, id, setOpen]);
+    // setOpen(activeEl === id);
+    if (activeEl === id) {
+      setCode({ fileName, html });
+    }
+  }, [activeEl, id, setCode, fileName, html]);
+
+  useEffect(() => {
+    // Giving a little time for the drawer animation to complete before re-setting.
+    setTimeout(() => {
+      if (childRef.current instanceof Element) {
+        const rectangle = childRef.current.getBoundingClientRect();
+        if (
+          dimensions.width !== rectangle.width ||
+          dimensions.height !== rectangle.height
+        ) {
+          setDimensions({
+            width: rectangle.width,
+            height: rectangle.height,
+            top: rectangle.top,
+            left: rectangle.left,
+            bottom: rectangle.bottom,
+            right: rectangle.right
+          });
+        }
+      }
+    }, 200);
+  }, [open, childRef, dimensions, setDimensions]);
 
   return (
-    <Tooltip
-      {...props}
-      open={enabled && open}
-      title={
-        <RootGrid container direction="column">
-          <Grid item>
-            <Typography component="span">Code:</Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="caption" component="span">
-              {relativeFileName(fileName)}
-            </Typography>
-          </Grid>
-          <CodeGrid item>
-            <div dangerouslySetInnerHTML={{ __html }} />
-          </CodeGrid>
-        </RootGrid>
-      }
+    <CodeChildren
+      data-adjust={treeDepth}
+      data-height={dimensions.height}
+      data-width={dimensions.width}
+      data-top={dimensions.top}
+      data-left={dimensions.left}
+      data-bottom={dimensions.bottom}
+      data-right={dimensions.right}
+      data-open={open}
+      {...setChildrenProps(id, setActive)}
     >
       {React.cloneElement(children, {
-        ...setChildrenProps(children, id, setActive)
+        ref: childRef,
+        ...(children.props ? children.props : {})
       })}
-    </Tooltip>
+    </CodeChildren>
   );
 };
 

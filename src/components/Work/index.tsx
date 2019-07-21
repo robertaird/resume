@@ -8,15 +8,17 @@ import Code from "containers/Code";
 import txt from "!raw-loader!./index.tsx";
 
 type Props = {
-  data: workItem;
-};
+  workItem: workItem;
+} & React.HTMLProps<HTMLDivElement>;
 
-export const Work: React.FC<Props> = ({ data }) => {
-  return (
-    <Code code={txt}>
-      <Grid container />
-    </Code>
-  );
-};
+export const Work = React.forwardRef<HTMLDivElement, Props>(
+  ({ workItem }, ref) => {
+    return (
+      <Code code={txt}>
+        <Grid ref={ref} container />
+      </Code>
+    );
+  }
+);
 
 export default Work;

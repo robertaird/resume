@@ -14,6 +14,7 @@ import theme from "./style/theme";
 import Resume from "./containers/Resume";
 
 const RootDiv = styled.div`
+  display: flex;
   width: 100%;
   height: 100%;
 `;
@@ -34,7 +35,7 @@ const App: React.FC = () => {
             <Fragment>
               <GlobalStyle />
               <RootDiv className="App">
-                <Resume data={data} />
+                <Resume data={data} drawerWidth={550} />
               </RootDiv>
             </Fragment>
           </StyledThemeProvider>

@@ -27,6 +27,7 @@ export const ActiveContext = createContext({
   enabled: false
 } as ActiveState);
 
+// TODO: Click + Hold active
 const ActiveProvider: React.FC<ActiveProviderProps> = ({
   children,
   disabled

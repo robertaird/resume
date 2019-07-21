@@ -178,6 +178,12 @@ pre[class*="language-"] {
 .token.keyword-const + .token.class.class-name {
   color: var(--functions);
 }
+/* .token.keyword-const
+  + .token.class.class-name
+  + .token.operator
+  + .token.class.class-name {
+  color: var(--functions);
+} */
 .token.entity,
 .token.number,
 .token.unit,

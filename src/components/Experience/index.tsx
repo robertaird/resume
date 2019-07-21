@@ -8,22 +8,19 @@ import Code from "containers/Code";
 import txt from "!raw-loader!./index.tsx";
 
 type Props = {
-  data: resume["experience"];
-};
+  experience: resume["experience"];
+} & React.HTMLProps<HTMLDivElement>;
 
-export const Experience: React.FC<Props> = ({ data }) => {
-  return (
-    <Code code={txt}>
-      <Section title="Experience">
-        {/* {links.map(link => (
-          <Grid key={`link-${link[0]}`} item container direction="row">
-            <Label>{link[0]}</Label>
-            <Data>{link[1]}</Data>
-          </Grid>
-        ))} */}
-      </Section>
-    </Code>
-  );
-};
+export const Experience = React.forwardRef<HTMLDivElement, Props>(
+  ({ experience }, ref) => {
+    return (
+      <Code code={txt}>
+        <Section title="Experience" outerRef={ref}>
+          <div />
+        </Section>
+      </Code>
+    );
+  }
+);
 
 export default Experience;
