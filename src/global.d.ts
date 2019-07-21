@@ -40,3 +40,7 @@ type resume = {
   };
   education: educationItem[];
 };
+
+declare module "console" {
+  export = typeof import("console");
+}

@@ -1,0 +1,256 @@
+/**
+ * Darcula theme
+ *
+ * Adapted from a theme based on:
+ * IntelliJ Darcula Theme (https://github.com/bulenkov/Darcula)
+ *
+ * @author Alexandre Paradis <service.paradis@gmail.com>
+ * @version 1.0
+ */
+
+:root {
+  /* syntax */
+
+  /* Shuttle Gray #5c6370 - Comments */
+  --comments: #5c6370;
+  /* Whiskey #d19a66 - Functions */
+  --functions: #d19a66;
+  /* Sunglo #e06c75 - Keywords */
+  --keywords: #e06c75;
+  /* Fountain Blue #56b6c2 - Primitives */
+  --primitives: #56b6c2;
+  /* Cadet Blue #abb2bf - Punctuation */
+  --punctuation: #abb2bf;
+  /* Cornflower Blue #61afef - Storage */
+  --storage: #61afef;
+  /* Olivine #98c379 - Strings */
+  --strings: #98c379;
+  /* Harvest Gold #e5c07b - Tags */
+  --tags: #e5c07b;
+  /* Iron #D2D6db - Variables */
+  --variables: #d2d6db;
+  /* ui */
+  /* Sunglo #e06c75 - Primary: buttons, activity-bar badge */
+  --primary: #e06c75;
+  /* Cornflower Blue #61afef - Secondary: find highlight, bracket match etc. */
+  --secondary: #61afef;
+  /* Harvest Gold #e5c07b - Warning: squiggly underlines, find match errors etc. */
+  --warning: #e5c07b;
+  /* Cinnabar #E34234 - Error: squiggly underlines, find match errors etc. */
+  --error: #e34234;
+  /* Bunker #080A0F - Borders: borders that separate the panels, sidebars, tabs etc. */
+  --borders: #080a0f;
+  /* Shark #21252b - Background: editor, titlebar, and activity bar background */
+  --background: #21252b;
+  /* Woodsmoke #181A1F - Panels: sidebar, terminal, inactive tabs etc. */
+  --panel: #181a1f;
+  /* Shuttle Gray #5F6672 - Text Subtle: line numbers, muted items */
+  --text-subtle: #5f6672;
+  /* Cadet Blue #A9B2C3 - Text */
+  --text: #a9b2c3;
+  /* Iron #D4D7D9 - Text Active: active tab, active line number, active list text etc. */
+  --text-active: #d4d7d9;
+  /* Cadet Blue (1A opacity) #A9B2C31A - Highlight: ui flourishes: whitespace, indent guide, ruler, line highlight */
+  --highlight: #a9b2c31a;
+  /* Cadet Blue (33 opacity) #A9B2C333 - Highlight Active: active indent guide, selection, search match */
+  --highlight-active: #a9b2c333;
+  /* Iron #D4D7D9 - Highlight Border: search match borders */
+  --highlight-border: #d4d7d9;
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #a9b7c6;
+  font-family: Consolas, Monaco, "Andale Mono", monospace;
+  direction: ltr;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection,
+pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection,
+code[class*="language-"] ::-moz-selection {
+  color: inherit;
+  background: rgba(33, 66, 131, 0.85);
+}
+
+pre[class*="language-"]::selection,
+pre[class*="language-"] ::selection,
+code[class*="language-"]::selection,
+code[class*="language-"] ::selection {
+  color: inherit;
+  background: rgba(33, 66, 131, 0.85);
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  padding: 1em;
+  margin: 0.5em 0;
+  overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+  background: #2b2b2b;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  padding: 0.1em;
+  border-radius: 0.3em;
+}
+
+.token.comment,
+.token.prolog,
+.token.cdata {
+  color: var(--comments);
+}
+
+.token.keyword {
+  color: var(--keywords);
+}
+
+.token.keyword.keyword-type {
+  color: var(--storage);
+}
+.token.delimiter,
+.token.boolean,
+.token.selector,
+.token.important,
+.token.atrule {
+  color: var(--storage);
+}
+
+.token.attr-name {
+  color: var(--functions);
+}
+
+.token.constant + .token.tag .token.class-name {
+  color: var(--tags) !important;
+}
+
+.token.keyword-const
+  + .token.class-name
+  + .token.punctuation
+  + .token.class-name {
+  color: var(--tags);
+}
+.token.keyword-const + .token.class.class-name + .token.punctuation,
+.token.operator {
+  color: var(--keywords);
+}
+
+.token.interpolation {
+  color: var(--variables);
+}
+
+.token.punctuation,
+.token.tag .punctuation {
+  color: var(--text);
+}
+
+.token.interpolation-punctuation.punctuation {
+  color: var(--text-subtle);
+}
+
+.token.tag,
+.token.doctype,
+.token.builtin {
+  color: var(--tags);
+}
+
+.token.tag .class-name {
+  color: var(--storage);
+}
+.token.keyword-const + .token.class.class-name {
+  color: var(--functions);
+}
+.token.entity,
+.token.number,
+.token.unit,
+.token.symbol {
+  color: var(--primitives);
+}
+
+.token.property,
+.token.variable {
+  color: var(--variables);
+}
+.token.constant {
+  color: var(--tags);
+}
+
+.token.string,
+.token.char {
+  color: var(--strings);
+}
+
+.token.attr-value,
+.token.attr-value .punctuation {
+  color: var(--strings);
+}
+.token.attr-value .punctuation:first-child {
+  color: var(--text-subtle);
+}
+
+.token.url {
+  color: #287bde;
+  text-decoration: underline;
+}
+
+.token.function {
+  color: var(--functions);
+}
+
+.token.regex {
+  background: var(--keywords);
+}
+
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.inserted {
+  background: #294436;
+}
+
+.token.deleted {
+  background: #484a4a;
+}
+
+/*code.language-css .token.punctuation {
+	color: #cc7832;
+}*/
+
+code.language-css .token.property,
+code.language-css .token.property + .token.punctuation {
+  color: #a9b7c6;
+}
+
+code.language-css .token.id {
+  color: #ffc66d;
+}
+
+code.language-css .token.selector > .token.class,
+code.language-css .token.selector > .token.attribute,
+code.language-css .token.selector > .token.pseudo-class,
+code.language-css .token.selector > .token.pseudo-element {
+  color: #ffc66d;
+}

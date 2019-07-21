@@ -8,22 +8,22 @@ import Code from "../../containers/Code";
 import txt from "!raw-loader!./index.tsx";
 
 type Props = {
-  data: personal;
+  data: resume["experience"];
 };
 
-export const About: React.FC<Props> = ({ data: { links } }) => {
+export const Experience: React.FC<Props> = ({ data }) => {
   return (
     <Code code={txt}>
-      <Section title="About">
-        {links.map(link => (
+      <Section title="Experience">
+        {/* {links.map(link => (
           <Grid key={`link-${link[0]}`} item container direction="row">
             <Label>{link[0]}</Label>
             <Data>{link[1]}</Data>
           </Grid>
-        ))}
+        ))} */}
       </Section>
     </Code>
   );
 };
 
-export default About;
+export default Experience;

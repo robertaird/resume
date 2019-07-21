@@ -1,13 +1,22 @@
 import React from "react";
 import { Grid, Typography } from "@material-ui/core";
+import Section from "../Section";
+import Label from "../DataLabel";
+import Data from "../DataItem";
+import Code from "../../containers/Code";
+// @ts-ignore
+import txt from "!raw-loader!./index.tsx";
 
-type Props = {};
-export const About: React.FC<Props> = props => {
+type Props = {
+  data: workItem;
+};
+
+export const Work: React.FC<Props> = ({ data }) => {
   return (
-    <Grid>
-      <Typography>About</Typography>
-    </Grid>
+    <Code code={txt}>
+      <Grid container />
+    </Code>
   );
 };
 
-export default About;
+export default Work;
