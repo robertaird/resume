@@ -1,22 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import Prism from "../../prism";
 import styled from "styled-components";
-import {
-  Grid as MuiGrid,
-  Tooltip,
-  Typography as MuiTypography
-} from "@material-ui/core";
-import { ActiveContext } from "../ActiveProvider";
+import { Grid, Tooltip, Typography as MuiTypography } from "@material-ui/core";
+import { ActiveContext } from "containers/ActiveProvider";
 
 type Props = {
   code: string;
 } & Omit<React.ComponentProps<typeof Tooltip>, "title">;
 
-const RootGrid = styled(MuiGrid)`
+const RootGrid = styled(Grid)`
   white-space: pre;
 `;
 
-const CodeGrid = styled(MuiGrid)`
+const CodeGrid = styled(Grid)`
   font-family: "Inconsolata", monospace;
   background: ${props => props.theme.palette.background.default}AA;
   padding: 10px;
@@ -27,16 +23,11 @@ const CodeGrid = styled(MuiGrid)`
   line-height: 1.2rem;
 `;
 
-const Grid = styled(MuiGrid)`
-  /* align-self: baseline; */
-`;
-
 const Typography = styled(MuiTypography)`
   color: ${props => props.theme.palette.primary.light};
 `;
 
-// TODO: Need to differentiate between import locations. Or make generic!
-const replaceText = `import Code from "../../containers/Code";\n// @ts-ignore\nimport txt from "!raw-loader!./index.tsx";\n`;
+const replaceText = `import Code from "containers/Code";\n// @ts-ignore\nimport txt from "!raw-loader!./index.tsx";\n`;
 
 const removeFirstIndent = (code: string) => code.replace(/^(?:\s\s)/gm, "");
 

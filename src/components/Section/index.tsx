@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid, Typography } from "@material-ui/core";
-import Code from "../../containers/Code";
+import Code from "containers/Code";
 // @ts-ignore
 import txt from "!raw-loader!./index.tsx";
 

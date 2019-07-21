@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Grid as MuiGrid, Typography } from "@material-ui/core";
-import Code from "../../containers/Code";
+import Code from "containers/Code";
 // @ts-ignore
 import txt from "!raw-loader!./index.tsx";
 

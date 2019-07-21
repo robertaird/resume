@@ -1,9 +1,9 @@
 import React from "react";
-import { Grid, Typography } from "@material-ui/core";
-import Section from "../Section";
-import Label from "../DataLabel";
-import Data from "../DataItem";
-import Code from "../../containers/Code";
+import { CardHeader /* , Grid, Typography */ } from "@material-ui/core";
+// import Section from "../Section";
+// import Label from "../DataLabel";
+// import Data from "../DataItem";
+import Code from "containers/Code";
 // @ts-ignore
 import txt from "!raw-loader!./index.tsx";
 
@@ -14,7 +14,10 @@ type Props = {
 export const Experience: React.FC<Props> = ({ data }) => {
   return (
     <Code code={txt}>
-      <div />
+      <CardHeader
+        title={`${data.firstName} ${data.lastName}`}
+        subheader={data.title}
+      />
     </Code>
   );
 };
