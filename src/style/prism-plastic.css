@@ -244,6 +244,9 @@ pre[class*="language-"] {
 /*code.language-css .token.punctuation {
 	color: #cc7832;
 }*/
+.token.script.language-javascript {
+  color: var(--variables);
+}
 
 code.language-css .token.property,
 code.language-css .token.property + .token.punctuation {

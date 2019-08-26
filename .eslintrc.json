@@ -1,6 +1,42 @@
 {
-  "extends": "react-app",
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "jsx": true,
+    "useJSXTextNode": true
+  },
+  "plugins": [
+    "prettier",
+    "@typescript-eslint",
+    "react-hooks",
+    "jsx-a11y",
+    "import"
+  ],
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "react-app",
+    "plugin:prettier/recommended",
+    // "plugin:import/errors",
+    // "plugin:import/warnings",
+    "plugin:import/typescript",
+    "prettier/@typescript-eslint"
+  ],
   "rules": {
-    "import/no-webpack-loader-syntax": false
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-member-accessibility": "off",
+    "@typescript-eslint/no-object-literal-type-assertion": [
+      "error",
+      {
+        "allowAsParameter": true
+      }
+    ],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "import/no-webpack-loader-syntax": 0,
+    "import/no-unused-modules": [
+      1,
+      {
+        "unusedExports": true
+      }
+    ]
   }
 }
