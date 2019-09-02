@@ -2,50 +2,54 @@
  * @module SourceProvider
  * Provides the current active element to consumers, as well as the appropriate setters
  */
-import React, { createContext, useState } from "react";
-import styled from "styled-components";
-import { Drawer as MuiDrawer } from "@material-ui/core";
-import CodeView from "components/CodeView";
+import React, { createContext, useState } from 'react';
+import styled from 'styled-components';
+import { Drawer as MuiDrawer } from '@material-ui/core';
+import CodeView from 'components/CodeView';
 
-const defaultCode = { fileName: "", html: "" };
+const defaultCode = { fileName: '', html: '' };
 
-type SourceProviderProps = {
+interface SourceProviderProps {
   drawerWidth: number;
   disabled?: boolean;
   children: (open: boolean) => React.ReactNode;
-};
-type SourceState = {
+}
+
+interface SourceState {
   code: typeof defaultCode;
   setCode:
     | React.Dispatch<React.SetStateAction<typeof defaultCode>>
     | (() => void);
   open: boolean;
   handleOpen: () => void;
-};
+}
 
-type DrawerProps = {
-  "data-width": number;
-};
+interface DrawerProps {
+  'data-width': number;
+}
+
 const Drawer = styled(MuiDrawer)<DrawerProps>`
   text-align: left;
-  min-width: ${props => props["data-width"]}px;
+  min-width: ${props => props['data-width']}px;
   flex-shrink: 0;
-
+  pointer-events: none;
   & .MuiPaper-root {
     overflow: visible;
-    width: ${props => props["data-width"]}px;
+    width: ${props => props['data-width']}px;
+    pointer-events: default;
   }
 `;
 
 export const SourceContext = createContext({
   code: defaultCode,
   setCode: () => {},
-  handleOpen: () => {}
+  handleOpen: () => {},
 } as SourceState);
 
+// TODO: Create a store for parsed html strings
 const SourceProvider: React.FC<SourceProviderProps> = ({
   drawerWidth,
-  children
+  children,
 }) => {
   const [code, setCode] = useState(defaultCode);
   const [open, toggleOpen] = useState(false);

@@ -10,24 +10,25 @@ type SectionProps = Pick<
   'padding' | 'headerRadius'
 >;
 
-interface Props extends React.HTMLProps<HTMLDivElement>, SectionProps {
-  personal: personal;
-}
+type Props = {
+  otherExperience: resume['experience']['other'];
+} & SectionProps &
+  React.HTMLProps<HTMLDivElement>;
 
-export const About = React.forwardRef<HTMLDivElement, Props>(
-  ({ personal: { about }, padding, headerRadius }, ref) => {
+export const RelatedExperience = React.forwardRef<HTMLDivElement, Props>(
+  ({ otherExperience, headerRadius, padding }, ref) => {
     return (
       <Code code={txt}>
         <Section
+          title="Related Experience"
           outerRef={ref}
-          title="About"
           headerRadius={headerRadius}
           padding={padding}
         >
-          {about.map((paragraph, i) => (
-            <Grid key={`about-${i}`} item container direction="row">
+          {otherExperience.map((item, i) => (
+            <Grid key={`skills-${i}`} item container direction="row">
               <PaddedTypography paragraph variant="body2" align="left">
-                {paragraph}
+                {item}
               </PaddedTypography>
             </Grid>
           ))}
@@ -37,4 +38,4 @@ export const About = React.forwardRef<HTMLDivElement, Props>(
   },
 );
 
-export default About;
+export default RelatedExperience;

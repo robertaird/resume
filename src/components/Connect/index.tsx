@@ -1,20 +1,42 @@
-import React from "react";
-import styled from "styled-components";
-import { Grid /* Typography */ } from "@material-ui/core";
-import Section from "components/Section";
-// import Label from "components/DataLabel";
-import Data from "components/DataItem";
-import Field from "components/DataField";
-import Code from "containers/Code";
+import React from 'react';
+import styled from 'styled-components';
+import { Grid, Link } from '@material-ui/core';
+import { Section, SpanNoWrap } from 'components/Common';
+import { Github, LinkedIn } from 'components/icons';
+import Code from 'containers/Code';
 // @ts-ignore
-import txt from "!raw-loader!./index.tsx";
+import txt from '!raw-loader!./index.tsx';
+
+type SectionProps = Pick<
+  React.ComponentPropsWithoutRef<typeof Section>,
+  'padding' | 'headerRadius'
+>;
+
+interface Icons {
+  [k: string]: React.ReactNode;
+}
 
 type Props = {
   personal: personal;
-} & React.HTMLProps<HTMLDivElement>;
+} & SectionProps &
+  React.HTMLProps<HTMLDivElement>;
 
+const icons: Icons = {
+  github: <Github color="primary" />,
+  linkedin: <LinkedIn color="primary" />,
+};
+
+const Links = styled(Grid)`
+  max-width: 395px;
+  margin-left: auto;
+`;
+
+/**
+ * TODO: RowItem component
+ * TODO: Link component
+ */
 const RowItem: React.FC = styled(({ children, className }) => (
-  <Grid className={className} item container direction="row">
+  <Grid xs="auto" className={className} item container direction="row">
     {children}
   </Grid>
 ))`
@@ -23,30 +45,45 @@ const RowItem: React.FC = styled(({ children, className }) => (
 
 const BasicRow: React.FC = ({ children }) => (
   <RowItem>
-    <Data fullWidth>{children}</Data>
+    <SpanNoWrap>{children}</SpanNoWrap>
   </RowItem>
 );
 export const About = React.forwardRef<HTMLDivElement, Props>(
-  ({ personal: { location, phone, email, links } }, ref) => {
+  (
+    { personal: { location, phone, email, links }, headerRadius, padding },
+    ref,
+  ) => {
     return (
       <Code code={txt}>
-        <Section title="Connect" outerRef={ref}>
+        <Section
+          title="Connect"
+          outerRef={ref}
+          headerRadius={headerRadius}
+          padding={padding}
+        >
           <BasicRow>{location}</BasicRow>
           <RowItem />
           <BasicRow>{phone}</BasicRow>
           <BasicRow>{email}</BasicRow>
           <RowItem />
-          <Grid container item>
+          <Links container item>
             {links.map(link => (
               <RowItem key={`link-${link[0]}`}>
-                <Field label={link[0]} data={link[1]} />
+                <Grid container item xs={2} alignContent="center">
+                  {icons[link[0]] ? icons[link[0]] : ''}
+                </Grid>
+                <Grid container item xs alignContent="flex-end">
+                  <Link href={link[2]} noWrap variant="body2">
+                    {link[1]}
+                  </Link>
+                </Grid>
               </RowItem>
             ))}
-          </Grid>
+          </Links>
         </Section>
       </Code>
     );
-  }
+  },
 );
 
 export default About;

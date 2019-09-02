@@ -1,59 +1,45 @@
-import React, { useContext } from "react";
-import styled from "styled-components";
-import {
-  CardHeader,
-  Grid,
-  Typography,
-  Switch as MuiSwitch /* , Grid, Typography */
-} from "@material-ui/core";
-// import Section from "../Section";
-// import Label from "../DataLabel";
-// import Data from "../DataItem";
-import { SourceContext } from "containers/SourceDrawer";
-import Code from "containers/Code";
+import React from 'react';
+import styled from 'styled-components';
+import { CardHeader as MuiCardHeader } from '@material-ui/core';
+import Code from 'containers/Code';
 // @ts-ignore
-import txt from "!raw-loader!./index.tsx";
+import txt from '!raw-loader!./index.tsx';
 
-type Props = {
+interface Props {
   personal: personal;
-} & React.HTMLProps<HTMLDivElement>;
+  action?: React.ReactNode;
+}
 
-const Switch = styled(MuiSwitch)`
-  z-index: 100;
+const CardHeader = styled(MuiCardHeader)`
+  & .MuiCardHeader-avatar {
+    margin-right: 0;
+    margin-left: -8px;
+  }
+
+  &.MuiCardHeader-root {
+    padding: 6px 8px;
+  }
 `;
 
-const GridContainer = styled(Grid)`
-  margin-top: 16px;
-`;
-
-const SwitchItem = styled(Grid)`
-  margin: -6px;
-`;
-
-export const Experience = React.forwardRef<HTMLDivElement, Props>(
-  ({ personal }, ref) => {
-    const { handleOpen } = useContext(SourceContext);
+export const Header = React.forwardRef<HTMLDivElement, Props>(
+  ({ personal, action }, ref) => {
     return (
       <Code code={txt}>
         <CardHeader
           ref={ref}
           title={`${personal.firstName} ${personal.lastName}`}
-          titleTypographyProps={{ color: "primary" }}
+          titleTypographyProps={{
+            color: 'primary',
+            variant: 'h4',
+            align: 'left',
+          }}
+          subheaderTypographyProps={{ variant: 'subtitle1', align: 'left' }}
           subheader={personal.title}
-          action={
-            <GridContainer container direction="column">
-              <SwitchItem item>
-                <Switch size="small" onChange={handleOpen} />
-              </SwitchItem>
-              <Grid item>
-                <Typography variant="caption">Toggle Inspector</Typography>
-              </Grid>
-            </GridContainer>
-          }
+          action={action}
         />
       </Code>
     );
-  }
+  },
 );
 
-export default Experience;
+export default Header;

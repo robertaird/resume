@@ -1,0 +1,66 @@
+import React, { useContext } from 'react';
+import styled from 'styled-components';
+import { Grid, Typography, Switch as MuiSwitch } from '@material-ui/core';
+import { SourceContext } from 'containers/SourceDrawer';
+import { ThemeContext } from 'containers/ThemeProvider';
+import Code from 'containers/Code';
+// @ts-ignore
+import txt from '!raw-loader!./index.tsx';
+
+const Switch = styled(MuiSwitch)`
+  z-index: 100;
+`;
+
+const GridContainer = styled(Grid)`
+  width: 200px;
+  margin-top: 16px;
+`;
+
+const GridItem = styled(Grid)`
+  width: 100px;
+  margin-top: 16px;
+`;
+
+const SwitchItem = styled(Grid)`
+  margin: -6px;
+  @media print {
+    display: none;
+  }
+`;
+
+const SwitchTypography = styled(Typography)`
+  @media print {
+    display: none;
+  }
+`;
+
+export const HeaderButtons = () => {
+  const { handleOpen } = useContext(SourceContext);
+  const { toggleTheme } = useContext(ThemeContext);
+  return (
+    <GridContainer container>
+      <GridItem container item direction="column">
+        <SwitchItem item>
+          <Switch size="small" onChange={handleOpen} />
+        </SwitchItem>
+        <Grid item>
+          <SwitchTypography color="textSecondary" variant="caption">
+            Toggle Inspector
+          </SwitchTypography>
+        </Grid>
+      </GridItem>
+      <GridItem container item direction="column">
+        <SwitchItem item>
+          <Switch size="small" onChange={toggleTheme} />
+        </SwitchItem>
+        <Grid item>
+          <SwitchTypography color="textSecondary" variant="caption">
+            Toggle Theme
+          </SwitchTypography>
+        </Grid>
+      </GridItem>
+    </GridContainer>
+  );
+};
+
+export default HeaderButtons;

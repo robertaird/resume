@@ -1,11 +1,11 @@
-import React from "react";
-import styled from "styled-components";
-import { Grid, Tooltip, Typography as MuiTypography } from "@material-ui/core";
+import React from 'react';
+import styled from 'styled-components';
+import { Grid, Typography as MuiTypography } from '@material-ui/core';
 
-type Props = {
+interface Props {
   fileName: string;
   html: string;
-}; // & React.HTMLProps<HTMLDivElement>;
+} // & React.HTMLProps<HTMLDivElement>;
 
 const RootGrid = styled(Grid)`
   white-space: pre;
@@ -15,10 +15,11 @@ const RootGrid = styled(Grid)`
 
 const CodeGrid = styled(Grid)`
   height: calc(100% - 70px);
-  font-family: "Inconsolata", monospace;
+  font-family: 'Inconsolata', monospace;
   overflow-x: hidden;
   overflow-y: auto;
-  background: #21252b;
+  background: var(--background);
+  color: var(--variables);
   padding: 10px;
   margin: 10px 0;
   border: 1px solid ${props => props.theme.palette.background.default};

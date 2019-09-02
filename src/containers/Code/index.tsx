@@ -3,31 +3,31 @@
  *
  * TODO: Display implementation of this component?
  */
-import React, { Fragment, useContext, useEffect, useState } from "react";
-import Prism from "../../prism";
-import styled from "styled-components";
-import { ActiveContext } from "containers/ActiveProvider";
-import { SourceContext } from "containers/SourceDrawer";
+import React, { Fragment, useContext, useEffect, useState } from 'react';
+import Prism from '../../prism';
+import styled from 'styled-components';
+import { ActiveContext } from 'containers/ActiveProvider';
+import { SourceContext } from 'containers/SourceDrawer';
 
-type Props = {
+interface Props {
   code: string;
   children: React.ReactElement;
-};
+}
 
-type HoverAreaProps = {
-  "data-open": boolean;
-  "data-adjust"?: number;
-  "data-width": number;
-  "data-height": number;
-  "data-top": number;
-  "data-left": number;
-  "data-bottom": number;
-  "data-right": number;
-};
+interface HoverAreaProps {
+  'data-open': boolean;
+  'data-adjust': number;
+  'data-width': number;
+  'data-height': number;
+  'data-top': number;
+  'data-left': number;
+  'data-bottom': number;
+  'data-right': number;
+}
 
 type CodeChildrenProps = { children: React.ReactNode } & HoverAreaProps;
 
-type dimensions = {
+interface Dimensions {
   height: number;
   width: number;
   top: number;
@@ -36,38 +36,44 @@ type dimensions = {
   right: number;
   // x: number;
   // y: number;
-};
+}
 
 const HoverArea = styled.div<HoverAreaProps>`
-  pointer-events: ${props => (props["data-open"] ? "auto" : "none")};
+  pointer-events: ${props => (props['data-open'] ? 'auto' : 'none')};
   &:hover {
-    background: #aaaaaaaa;
   }
-  top: ${props => props["data-top"]}px;
-  left: ${props => [props["data-left"]]}px;
-  bottom: ${props => props["data-bottom"]}px;
-  right: ${props => props["data-right"]}px;
-  height: ${props =>
-    props["data-height"] - (20 - (props["data-adjust"] || 0) * 2)}px;
-  width: ${props =>
-    props["data-width"] - (20 - (props["data-adjust"] || 0) * 2)}px;
-  margin: ${props => 10 - (props["data-adjust"] || 0)}px;
+  &:hover div {
+    background: #aaaaaa77;
+    border: 2px solid ${props => props.theme.palette.secondary.light};
+  }
+  & div {
+    pointer-events: none;
+    border-radius: 4px;
+    width: calc(100% + ${props => 10 + props['data-adjust'] * 2}px);
+    height: calc(100% + ${props => 10 + props['data-adjust'] * 2}px);
+    margin-left: -${props => 5 + props['data-adjust']}px;
+    margin-top: -${props => 5 + props['data-adjust']}px;
+  }
+  top: ${props => props['data-top']}px;
+  left: ${props => [props['data-left']]}px;
+  bottom: ${props => props['data-bottom']}px;
+  right: ${props => props['data-right']}px;
+  height: ${props => props['data-height'] - (20 - props['data-adjust'] * 2)}px;
+  width: ${props => props['data-width'] - (20 - props['data-adjust'] * 2)}px;
+  margin: ${props => 10 - props['data-adjust']}px;
   z-index: ${props =>
     100 -
-    (props["data-adjust"] || 0) -
-    Math.max(
-      0,
-      Math.ceil(props["data-height"] / 5 / (props["data-adjust"] || 10))
-    )};
-  position: fixed;
+    props['data-adjust'] -
+    Math.max(0, Math.ceil(props['data-height'] / 5 / props['data-adjust']))};
+  position: absolute;
 `;
 
-const replaceText = `import Code from "containers/Code";\n// @ts-ignore\nimport txt from "!raw-loader!./index.tsx";\n`;
+const replaceText = `import Code from 'containers/Code';\n// @ts-ignore\nimport txt from '!raw-loader!./index.tsx';\n`;
 
-const removeFirstIndent = (code: string) => code.replace(/^(?:\s\s)/gm, "");
+const removeFirstIndent = (code: string) => code.replace(/^(?:\s\s)/gm, '');
 
 const relativeFileName = (fileName: string) => {
-  return `src/${fileName.split("src/")[1]}`;
+  return `src/${fileName.split('src/')[1]}`;
 };
 
 /**
@@ -75,22 +81,22 @@ const relativeFileName = (fileName: string) => {
  * blocks.
  */
 const cleanCode = (code: string) => {
-  const initial = code.replace(/\r\n/gm, "\n").replace(replaceText, "");
-  const split = initial.split("Code");
+  const initial = code.replace(/\r\n/gm, '\n').replace(replaceText, '');
+  const split = initial.split('Code');
   split[1] = removeFirstIndent(split[1]);
   return (
     split
       .map((section, i) => {
-        const lines = section.split("\n");
+        const lines = section.split('\n');
         if (i !== 0) {
           lines.splice(0, 1);
         }
         if (i !== split.length - 1) {
           lines.splice(lines.length - 1, 1);
         }
-        return lines.join("\n");
+        return lines.join('\n');
       })
-      .join("\n") + "\n"
+      .join('\n') + '\n'
   );
 };
 
@@ -104,43 +110,43 @@ const cleanCode = (code: string) => {
 const parseStyled = (code: string, next?: number): string => {
   const templateTag = '<span class="token string">`</span>';
   // don't count the import statement
-  const initial = code.indexOf("styled-components") + 17;
-  const startIndex = (typeof next === "number" ? next : initial) + 1;
+  const initial = code.indexOf('styled-components') + 17;
+  const startIndex = (typeof next === 'number' ? next : initial) + 1;
   // should probably check for index of 'styled.' or 'styled(' instead
-  const styledDeclaration = code.indexOf("styled", startIndex);
-  const templateStart = code.indexOf("`", styledDeclaration) + 1;
-  const templateEnd = code.indexOf("`", templateStart + 1);
+  const styledDeclaration = code.indexOf('styled', startIndex);
+  const templateStart = code.indexOf('`', styledDeclaration) + 1;
+  const templateEnd = code.indexOf('`', templateStart + 1);
   if (styledDeclaration > -1 && templateStart > -1 && templateEnd > -1) {
     return (
       Prism.highlight(
         code.substring(0, templateStart - 1),
         Prism.languages.tsx,
-        "tsx"
+        'tsx',
       ) +
       templateTag +
       Prism.highlight(
         code.substring(templateStart, templateEnd),
         Prism.languages.css,
-        "css"
+        'css',
       ) +
       templateTag +
       parseStyled(code.substring(templateEnd + 1))
     );
   } else {
-    return Prism.highlight(code, Prism.languages.tsx, "tsx");
+    return Prism.highlight(code, Prism.languages.tsx, 'tsx');
   }
 };
 
 /**
- * Attempts to re-parse elements with the .plain-text class
+ * Attempts to re-parse elements with the .plain-text class. Doesn't catch
+ * a lot, but it's better.
  * @param el
  */
 const replaceSpan = (el: HTMLElement) => {
-  const stripped = el.innerText.replace(/ /g, "");
+  const stripped = el.innerText.replace(/ /g, '');
   // arbitrary
   if (stripped.length > 10) {
-    // console.log(el.outerHTML, el.innerText);
-    const round2 = Prism.highlight(el.innerText, Prism.languages.js, "js");
+    const round2 = Prism.highlight(el.innerText, Prism.languages.js, 'js');
     el.innerHTML = round2;
   }
   return el;
@@ -152,10 +158,10 @@ const replaceSpan = (el: HTMLElement) => {
  * @param code
  */
 const cleanup = (code: string) => {
-  const div = document.createElement("div");
+  const div = document.createElement('div');
   let plainTextNodes;
   div.innerHTML = code;
-  plainTextNodes = div.getElementsByClassName("plain-text");
+  plainTextNodes = div.getElementsByClassName('plain-text');
   if (plainTextNodes.length) {
     for (let i = 0; i < plainTextNodes.length; i++) {
       replaceSpan(plainTextNodes[i] as HTMLElement);
@@ -164,13 +170,15 @@ const cleanup = (code: string) => {
   return div.innerHTML;
 };
 
+/** Add props to the hover element */
 const setChildrenProps = (id: string, setActive: React.Dispatch<any>) => ({
   onMouseOver: (e: React.MouseEvent) => {
     e.stopPropagation();
     setActive(id);
-  }
+  },
 });
 
+/** Try to suss out approximately how high up the current child is in the tree */
 const getTreeDepth = (children: React.ReactElement, count = 0): number => {
   let newCount = count;
   if (children) {
@@ -182,39 +190,43 @@ const getTreeDepth = (children: React.ReactElement, count = 0): number => {
   return newCount;
 };
 
+/**
+ * Little helper component to hold any refs passed to the Code component.
+ */
 const CodeChildren = React.forwardRef(
   (
     { children, ...props }: CodeChildrenProps,
-    ref: React.Ref<HTMLDivElement>
+    ref: React.Ref<HTMLDivElement>,
   ) => (
     <Fragment>
-      <HoverArea ref={ref} {...props} />
+      <HoverArea ref={ref} {...props}>
+        <div />
+      </HoverArea>
       {children}
     </Fragment>
-  )
+  ),
 );
 
 // TODO: Store formatted text by filename?
-export const Code: React.FC<Props> = ({ code, children, ...props }) => {
+export const Code: React.FC<Props> = ({ code, children }) => {
   // @ts-ignore
   const fileName = children._source
-    ? // It doesn't like me using source.
+    ? // It really doesn't like me using source.
       // @ts-ignore
       relativeFileName(children._source.fileName)
-    : "";
+    : '';
   const [html] = useState(cleanup(parseStyled(cleanCode(code))));
   const { activeEl, setActive, addId, idLength } = useContext(ActiveContext);
   const { open, setCode } = useContext(SourceContext);
-  const [id, setId] = useState("");
-  // const [open, setOpen] = useState(false);
+  const [id, setId] = useState('');
   const [treeDepth] = useState(getTreeDepth(children));
-  const [dimensions, setDimensions] = useState<dimensions>({
+  const [dimensions, setDimensions] = useState<Dimensions>({
     width: 0,
     height: 0,
     top: 0,
     left: 0,
     bottom: 0,
-    right: 0
+    right: 0,
   });
   const childRef = React.useRef<HTMLElement>(null);
 
@@ -247,7 +259,7 @@ export const Code: React.FC<Props> = ({ code, children, ...props }) => {
             top: rectangle.top,
             left: rectangle.left,
             bottom: rectangle.bottom,
-            right: rectangle.right
+            right: rectangle.right,
           });
         }
       }
@@ -268,7 +280,7 @@ export const Code: React.FC<Props> = ({ code, children, ...props }) => {
     >
       {React.cloneElement(children, {
         ref: childRef,
-        ...(children.props ? children.props : {})
+        ...(children.props ? children.props : {}),
       })}
     </CodeChildren>
   );

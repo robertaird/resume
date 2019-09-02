@@ -1,26 +1,26 @@
-import React from "react";
-// import { Grid, Typography } from "@material-ui/core";
-import Section from "components/Section";
-// import Label from "components/DataLabel";
-// import Data from "components/DataItem";
-import Code from "containers/Code";
+import React from 'react';
+import { Section } from 'components/Common';
+import Work from './Work';
+import Code from 'containers/Code';
 // @ts-ignore
-import txt from "!raw-loader!./index.tsx";
+import txt from '!raw-loader!./index.tsx';
 
 type Props = {
-  experience: resume["experience"];
+  experience: resume['experience'];
 } & React.HTMLProps<HTMLDivElement>;
 
 export const Experience = React.forwardRef<HTMLDivElement, Props>(
   ({ experience }, ref) => {
     return (
       <Code code={txt}>
-        <Section title="Experience" outerRef={ref}>
-          <div />
+        <Section title="Professional Experience" outerRef={ref}>
+          {experience.work.map(workItem => (
+            <Work key={`${workItem.company.name}-comp`} workItem={workItem} />
+          ))}
         </Section>
       </Code>
     );
-  }
+  },
 );
 
 export default Experience;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-interface */
 type personal = {
   firstName: string;
   lastName: string;
@@ -5,18 +6,25 @@ type personal = {
   title: string;
   phone: string;
   email: string;
-  links: Array<string[]>;
+  links: string[][];
   about: string[];
+};
+
+type position = {
+  title: string;
+  accomplishments: (string | string[])[];
+  dates?: string;
+  description?: string;
 };
 
 type workItem = {
   company: {
     name: string;
     location: string;
+    dates: string;
   };
-  titles: Array<string[]>;
-  description: string;
-  accomplishments: string[];
+  description?: string;
+  positions: position[];
 };
 
 type educationItem = {
@@ -26,21 +34,21 @@ type educationItem = {
   date: string;
 };
 
+type skillsItem = {
+  title: string;
+  skills: string[];
+};
+
 type resume = {
   personal: personal;
   experience: {
     work: workItem[];
     other: string[];
   };
-  professionalSkills: {
-    frontEnd: string[];
-    backEnd: string[];
-    deployBuild: string[];
-    versionControl: string[];
-  };
+  professionalSkills: skillsItem[];
   education: educationItem[];
 };
 
-declare module "console" {
-  export = typeof import("console");
+declare module 'console' {
+  export = typeof import('console');
 }
