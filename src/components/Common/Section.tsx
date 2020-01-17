@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Grid as MuiGrid, Typography } from '@material-ui/core';
+import { DARK } from 'style/theme';
 import Code from 'containers/Code';
 // @ts-ignore
 import txt from '!raw-loader!./Section.tsx';
@@ -8,7 +9,7 @@ import txt from '!raw-loader!./Section.tsx';
 interface Props extends React.HTMLProps<HTMLDivElement> {
   title: string;
   padding?: string;
-  outerRef?: React.Ref<any>;
+  outerRef?: React.Ref<HTMLDivElement>;
   headerRadius?: headerRadiusOptions;
 }
 
@@ -40,7 +41,10 @@ const Grid = styled(MuiGrid)<GridProps>`
 
 const HeaderDiv = styled(MuiGrid)<HeaderProps>`
   border-radius: ${props => setHeaderRadius(props['data-headerradius'])};
-  background: ${props => props.theme.palette.primary.dark};
+  background: ${props =>
+    props.theme.palette.type === DARK
+      ? props.theme.palette.primary.dark
+      : props.theme.palette.primary.light};
   height: 32px;
   width: 100%;
   margin-bottom: 0.4rem;
@@ -57,26 +61,27 @@ const HeaderText = styled(Typography)`
   }
 `;
 
-export const Section = React.forwardRef<HTMLDivElement, Props>(
-  ({ children, title, outerRef, padding, headerRadius }, ref) => {
-    return (
-      <Code code={txt}>
-        <Grid container ref={outerRef} padding={padding}>
-          <HeaderDiv
-            container
-            justify="center"
-            alignContent="flex-end"
-            data-headerradius={headerRadius}
-          >
-            <HeaderText align="center" variant="h6">
-              {title}
-            </HeaderText>
-          </HeaderDiv>
-          <Grid ref={ref} item container alignItems="baseline" justify="center">
-            {children}
-          </Grid>
+export const Section = React.forwardRef<HTMLDivElement, Props>(function Section(
+  { children, title, outerRef, padding, headerRadius },
+  ref,
+) {
+  return (
+    <Code code={txt}>
+      <Grid container ref={outerRef} padding={padding}>
+        <HeaderDiv
+          container
+          justify="center"
+          alignContent="flex-end"
+          data-headerradius={headerRadius}
+        >
+          <HeaderText align="center" variant="h6" noWrap>
+            {title}
+          </HeaderText>
+        </HeaderDiv>
+        <Grid ref={ref} item container alignItems="baseline" justify="center">
+          {children}
         </Grid>
-      </Code>
-    );
-  },
-);
+      </Grid>
+    </Code>
+  );
+});

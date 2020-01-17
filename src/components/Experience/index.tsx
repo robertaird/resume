@@ -10,7 +10,7 @@ type Props = {
 } & React.HTMLProps<HTMLDivElement>;
 
 export const Experience = React.forwardRef<HTMLDivElement, Props>(
-  ({ experience }, ref) => {
+  function Experience({ experience }, ref) {
     return (
       <Code code={txt}>
         <Section title="Professional Experience" outerRef={ref}>

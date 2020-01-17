@@ -23,74 +23,62 @@ const TitleTypography = styled(BaseHeadingTypography)`
   font-style: italic;
 `;
 
-const ListTypography = styled(Typography)`
-  width: 100%;
-`;
-
-const ListItem: React.FC = ({ children }) => (
-  <ListTypography component="li" variant="body2" align="left">
-    {children}
-  </ListTypography>
-);
-
-export const Work = React.forwardRef<HTMLDivElement, Props>(
-  (
-    {
-      workItem: {
-        company: { name, location, dates: topDates },
-        description: topDescription,
-        positions,
-      },
+export const Work = React.forwardRef<HTMLDivElement, Props>(function Work(
+  {
+    workItem: {
+      company: { name, location, dates: topDates },
+      description: topDescription,
+      positions,
     },
-    ref,
-  ) => {
-    return (
-      <Code code={txt}>
-        <Grid ref={ref} container>
-          <HeadingGrid
-            title={
-              <React.Fragment>
-                <NameTypography variant="overline">{name}</NameTypography>
-                <NameTypography variant="caption">
-                  {', '}
-                  {location}
-                </NameTypography>
-              </React.Fragment>
-            }
-            date={<NameTypography variant="caption">{topDates}</NameTypography>}
-          />
-          <Grid item container>
-            <Typography variant="subtitle2" align="left">
-              {topDescription}
-            </Typography>
-          </Grid>
-          {positions.map(({ title, dates, accomplishments, description }) => (
-            <React.Fragment key={`${name}-${title}-detail`}>
-              <HeadingGrid
-                title={
-                  <TitleTypography variant="subtitle1" color="primary">
-                    {title}
-                  </TitleTypography>
-                }
-                date={
-                  <TitleTypography variant="subtitle1" color="primary">
-                    {dates}
-                  </TitleTypography>
-                }
-              />
-              <Grid item container>
-                <Typography variant="subtitle2">{description}</Typography>
-              </Grid>
-              <List
-                items={accomplishments}
-                id={`${name}${title}-accomplishment`}
-              />
-            </React.Fragment>
-          ))}
-        </Grid>
-      </Code>
-    );
   },
-);
+  ref,
+) {
+  return (
+    <Code code={txt}>
+      <Grid ref={ref} container>
+        <HeadingGrid
+          title={
+            <React.Fragment>
+              <NameTypography variant="overline">{name}</NameTypography>
+              <NameTypography variant="caption">
+                {', '}
+                {location}
+              </NameTypography>
+            </React.Fragment>
+          }
+          date={<NameTypography variant="caption">{topDates}</NameTypography>}
+        />
+        <Grid item container>
+          <Typography variant="subtitle2" align="left">
+            {topDescription}
+          </Typography>
+        </Grid>
+        {positions.map(({ title, dates, accomplishments, description }) => (
+          <React.Fragment key={`${name}-${title}-detail`}>
+            <HeadingGrid
+              title={
+                <TitleTypography variant="subtitle1" color="primary">
+                  {title}
+                </TitleTypography>
+              }
+              date={
+                <TitleTypography variant="subtitle1" color="primary">
+                  {dates}
+                </TitleTypography>
+              }
+            />
+            <Grid item container>
+              <Typography variant="subtitle2">{description}</Typography>
+            </Grid>
+            <List
+              items={accomplishments}
+              id={`${name}${title}-accomplishment`}
+            />
+          </React.Fragment>
+        ))}
+      </Grid>
+    </Code>
+  );
+});
 
 export default Work;

@@ -21,25 +21,26 @@ const CardHeader = styled(MuiCardHeader)`
   }
 `;
 
-export const Header = React.forwardRef<HTMLDivElement, Props>(
-  ({ personal, action }, ref) => {
-    return (
-      <Code code={txt}>
-        <CardHeader
-          ref={ref}
-          title={`${personal.firstName} ${personal.lastName}`}
-          titleTypographyProps={{
-            color: 'primary',
-            variant: 'h4',
-            align: 'left',
-          }}
-          subheaderTypographyProps={{ variant: 'subtitle1', align: 'left' }}
-          subheader={personal.title}
-          action={action}
-        />
-      </Code>
-    );
-  },
-);
+export const Header = React.forwardRef<HTMLDivElement, Props>(function Header(
+  { personal, action },
+  ref,
+) {
+  return (
+    <Code code={txt}>
+      <CardHeader
+        ref={ref}
+        title={`${personal.firstName} ${personal.lastName}`}
+        titleTypographyProps={{
+          color: 'primary',
+          variant: 'h4',
+          align: 'left',
+        }}
+        subheaderTypographyProps={{ variant: 'subtitle1', align: 'left' }}
+        subheader={personal.title}
+        action={action}
+      />
+    </Code>
+  );
+});
 
 export default Header;

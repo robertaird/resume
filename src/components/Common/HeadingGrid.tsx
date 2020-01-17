@@ -1,27 +1,48 @@
 import React from 'react';
-import { Grid } from '@material-ui/core';
+import styled from 'styled-components';
+import { Grid, Typography } from '@material-ui/core';
 import Code from 'containers/Code';
 // @ts-ignore
 import txt from '!raw-loader!./HeadingGrid.tsx';
 
+type TypographyProps = React.ComponentProps<typeof Typography>;
+
 interface Props {
-  title: React.ReactNode;
-  date: React.ReactNode;
+  title: React.ReactElement;
+  date: React.ReactElement;
 }
 
+const TitleContainer = styled(Grid)`
+  flex: 1 1 0;
+`;
+
+const DateContainer = styled(Grid)`
+  flex: 0 0 auto;
+  max-width: fit-content;
+`;
+
 export const HeadingGrid = React.forwardRef<HTMLDivElement, Props>(
-  ({ title, date }, ref) => (
-    <Code code={txt}>
-      <Grid ref={ref} item container>
-        <Grid item container xs={9}>
-          {title}
+  function HeadingGrid({ title, date }, ref) {
+    return (
+      <Code code={txt}>
+        <Grid ref={ref} item container xs={12}>
+          <TitleContainer item container justify="flex-start">
+            {React.cloneElement(title, {
+              ...title.props,
+              align: 'left',
+            } as TypographyProps)}
+          </TitleContainer>
+          <DateContainer item container justify="flex-end" zeroMinWidth>
+            {React.cloneElement(date, {
+              ...date.props,
+              align: 'right',
+              noWrap: true,
+            } as TypographyProps)}
+          </DateContainer>
         </Grid>
-        <Grid item container justify="flex-end" xs={3}>
-          {date}{' '}
-        </Grid>
-      </Grid>
-    </Code>
-  ),
+      </Code>
+    );
+  },
 );
 
 export default HeadingGrid;

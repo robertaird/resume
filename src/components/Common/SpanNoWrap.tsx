@@ -10,12 +10,14 @@ const Grid = styled(MuiGrid)``;
 export const SpanNoWrap = React.forwardRef<
   HTMLDivElement,
   React.HTMLProps<HTMLDivElement>
->(({ children }, ref) => (
-  <Code code={txt}>
-    <Grid ref={ref} item container xs={'auto'} justify={'center'}>
-      <Typography noWrap variant="body2" component="span">
-        {children}
-      </Typography>
-    </Grid>
-  </Code>
-));
+>(function SpanNoWrap({ children }, ref) {
+  return (
+    <Code code={txt}>
+      <Grid ref={ref} item container xs={'auto'} justify={'center'}>
+        <Typography noWrap variant="body2" component="span">
+          {children}
+        </Typography>
+      </Grid>
+    </Code>
+  );
+});

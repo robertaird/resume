@@ -16,7 +16,7 @@ type Props = {
   React.HTMLProps<HTMLDivElement>;
 
 export const RelatedExperience = React.forwardRef<HTMLDivElement, Props>(
-  ({ otherExperience, headerRadius, padding }, ref) => {
+  function RelatedExperience({ otherExperience, headerRadius, padding }, ref) {
     return (
       <Code code={txt}>
         <Section

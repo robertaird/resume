@@ -1,11 +1,4 @@
-import React, {
-  Fragment,
-  createContext,
-  useCallback,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { Fragment, createContext, useCallback, useState } from 'react';
 import {
   ThemeProvider as MuiThemeProvider,
   StylesProvider,

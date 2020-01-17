@@ -38,23 +38,63 @@ interface Dimensions {
   // y: number;
 }
 
-const HoverArea = styled.div<HoverAreaProps>`
-  pointer-events: ${props => (props['data-open'] ? 'auto' : 'none')};
+/**
+ * TODO: 
+ * Over 200 classes were generated for component styled.div. 
+Consider using the attrs method, together with a style object for frequently changed styles.
+Example:
+  const Component = styled.div.attrs({
+    style: ({ background }) => ({
+      background,
+    }),
+  })`width: 100%;`
+
+ */
+const HoverDiv = styled.div.attrs((props: HoverAreaProps) => ({
+  style: {
+    width: `calc(100% + ${10 + props['data-adjust'] * 2}px)`,
+    height: `calc(100% + ${10 + props['data-adjust'] * 2}px)`,
+    marginLeft: -(5 + props['data-adjust']),
+    marginTop: -(5 + props['data-adjust']),
+  },
+}))`
+  pointer-events: none;
+  border-radius: 4px;
+`;
+
+const HoverArea = styled.div.attrs((props: HoverAreaProps) => ({
+  style: {
+    zIndex: Math.floor(
+      100 -
+        props['data-adjust'] -
+        Math.max(0, Math.ceil(props['data-height'] / 5 / props['data-adjust'])),
+    ),
+    pointerEvents: props['data-open'] ? 'auto' : 'none',
+    top: props['data-top'],
+    left: props['data-left'],
+    bottom: props['data-bottom'],
+    right: props['data-right'],
+    height: props['data-height'] - (20 - props['data-adjust'] * 2),
+    width: props['data-width'] - (20 - props['data-adjust'] * 2),
+    margin: 10 - props['data-adjust'],
+  },
+}))<HoverAreaProps>`
+  /* pointer-events: ${props => (props['data-open'] ? 'auto' : 'none')}; */
   &:hover {
   }
   &:hover div {
     background: #aaaaaa77;
     border: 2px solid ${props => props.theme.palette.secondary.light};
   }
-  & div {
+  /* & div {
     pointer-events: none;
     border-radius: 4px;
     width: calc(100% + ${props => 10 + props['data-adjust'] * 2}px);
     height: calc(100% + ${props => 10 + props['data-adjust'] * 2}px);
     margin-left: -${props => 5 + props['data-adjust']}px;
     margin-top: -${props => 5 + props['data-adjust']}px;
-  }
-  top: ${props => props['data-top']}px;
+  } */
+  /* top: ${props => props['data-top']}px;
   left: ${props => [props['data-left']]}px;
   bottom: ${props => props['data-bottom']}px;
   right: ${props => props['data-right']}px;
@@ -64,7 +104,7 @@ const HoverArea = styled.div<HoverAreaProps>`
   z-index: ${props =>
     100 -
     props['data-adjust'] -
-    Math.max(0, Math.ceil(props['data-height'] / 5 / props['data-adjust']))};
+    Math.max(0, Math.ceil(props['data-height'] / 5 / props['data-adjust']))}; */
   position: absolute;
 `;
 
@@ -76,6 +116,11 @@ const relativeFileName = (fileName: string) => {
   return `src/${fileName.split('src/')[1]}`;
 };
 
+function isSingleChild(
+  children: React.ReactElement | React.ReactElement[],
+): children is React.ReactElement {
+  return children.hasOwnProperty('props');
+}
 /**
  * Removing all the extra stuff I added to the code to create the code
  * blocks.
@@ -171,7 +216,7 @@ const cleanup = (code: string) => {
 };
 
 /** Add props to the hover element */
-const setChildrenProps = (id: string, setActive: React.Dispatch<any>) => ({
+const setChildrenProps = (id: string, setActive: React.Dispatch<string>) => ({
   onMouseOver: (e: React.MouseEvent) => {
     e.stopPropagation();
     setActive(id);
@@ -179,12 +224,19 @@ const setChildrenProps = (id: string, setActive: React.Dispatch<any>) => ({
 });
 
 /** Try to suss out approximately how high up the current child is in the tree */
-const getTreeDepth = (children: React.ReactElement, count = 0): number => {
+const getTreeDepth = (
+  children: React.ReactElement | React.ReactElement[],
+  count = 0,
+): number => {
   let newCount = count;
   if (children) {
     newCount += React.Children.count(children);
-    if (children.props) {
-      newCount += getTreeDepth(children.props.children, newCount);
+    if (isSingleChild(children)) {
+      newCount = getTreeDepth(children.props.children, newCount);
+    } else if (Array.isArray(children)) {
+      newCount = children.reduce((count, child) => {
+        return count + getTreeDepth(child, count);
+      }, 0);
     }
   }
   return newCount;
@@ -193,19 +245,19 @@ const getTreeDepth = (children: React.ReactElement, count = 0): number => {
 /**
  * Little helper component to hold any refs passed to the Code component.
  */
-const CodeChildren = React.forwardRef(
-  (
-    { children, ...props }: CodeChildrenProps,
-    ref: React.Ref<HTMLDivElement>,
-  ) => (
+const CodeChildren = React.forwardRef(function CodeChildren(
+  { children, ...props }: CodeChildrenProps,
+  ref: React.Ref<HTMLDivElement>,
+) {
+  return (
     <Fragment>
       <HoverArea ref={ref} {...props}>
-        <div />
+        <HoverDiv {...props} />
       </HoverArea>
       {children}
     </Fragment>
-  ),
-);
+  );
+});
 
 // TODO: Store formatted text by filename?
 export const Code: React.FC<Props> = ({ code, children }) => {
@@ -220,6 +272,7 @@ export const Code: React.FC<Props> = ({ code, children }) => {
   const { open, setCode } = useContext(SourceContext);
   const [id, setId] = useState('');
   const [treeDepth] = useState(getTreeDepth(children));
+  // TODO: Tree adjust 10 + (-0.8 - 10)/(1 + (x/5))
   const [dimensions, setDimensions] = useState<Dimensions>({
     width: 0,
     height: 0,
@@ -268,7 +321,9 @@ export const Code: React.FC<Props> = ({ code, children }) => {
 
   return (
     <CodeChildren
-      data-adjust={treeDepth}
+      // data-adjust={treeDepth}
+      // data-adjust={10 + (-0.8 - 10) / (1 + treeDepth / 5)}
+      data-adjust={30 + (-0.8 - 30) / (1 + treeDepth / 15)}
       data-height={dimensions.height}
       data-width={dimensions.width}
       data-top={dimensions.top}

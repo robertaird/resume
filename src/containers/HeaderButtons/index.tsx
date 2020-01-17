@@ -34,33 +34,37 @@ const SwitchTypography = styled(Typography)`
   }
 `;
 
-export const HeaderButtons = () => {
-  const { handleOpen } = useContext(SourceContext);
-  const { toggleTheme } = useContext(ThemeContext);
-  return (
-    <GridContainer container>
-      <GridItem container item direction="column">
-        <SwitchItem item>
-          <Switch size="small" onChange={handleOpen} />
-        </SwitchItem>
-        <Grid item>
-          <SwitchTypography color="textSecondary" variant="caption">
-            Toggle Inspector
-          </SwitchTypography>
-        </Grid>
-      </GridItem>
-      <GridItem container item direction="column">
-        <SwitchItem item>
-          <Switch size="small" onChange={toggleTheme} />
-        </SwitchItem>
-        <Grid item>
-          <SwitchTypography color="textSecondary" variant="caption">
-            Toggle Theme
-          </SwitchTypography>
-        </Grid>
-      </GridItem>
-    </GridContainer>
-  );
-};
+export const HeaderButtons = React.forwardRef<HTMLDivElement, {}>(
+  function HeaderButtons(_props, ref) {
+    const { handleOpen } = useContext(SourceContext);
+    const { toggleTheme } = useContext(ThemeContext);
+    return (
+      <Code code={txt}>
+        <GridContainer ref={ref} container>
+          <GridItem container item direction="column">
+            <SwitchItem item>
+              <Switch size="small" onChange={handleOpen} />
+            </SwitchItem>
+            <Grid item>
+              <SwitchTypography color="textSecondary" variant="caption">
+                Toggle Inspector
+              </SwitchTypography>
+            </Grid>
+          </GridItem>
+          <GridItem container item direction="column">
+            <SwitchItem item>
+              <Switch size="small" onChange={toggleTheme} />
+            </SwitchItem>
+            <Grid item>
+              <SwitchTypography color="textSecondary" variant="caption">
+                Toggle Theme
+              </SwitchTypography>
+            </Grid>
+          </GridItem>
+        </GridContainer>
+      </Code>
+    );
+  },
+);
 
 export default HeaderButtons;

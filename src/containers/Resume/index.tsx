@@ -89,7 +89,7 @@ class Resume extends React.PureComponent<ResumeProps, ResumeState> {
               <MainContent data-shift={open} data-drawer-width={drawerWidth}>
                 <Header personal={data.personal} action={<HeaderButtons />} />
                 <Grid container direction="row-reverse">
-                  <LeftCol container item xs={3}>
+                  <LeftCol container item xs={12} md={3}>
                     <Paper elevation={0}>
                       <Connect
                         personal={data.personal}
@@ -113,7 +113,7 @@ class Resume extends React.PureComponent<ResumeProps, ResumeState> {
                       />
                     </Paper>
                   </LeftCol>
-                  <RightCol container item xs={9}>
+                  <RightCol container item xs={12} md={9}>
                     <Experience experience={data.experience} />
                     <RelatedExperience
                       otherExperience={data.experience.other}

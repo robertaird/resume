@@ -29,6 +29,7 @@ const icons: Icons = {
 const Links = styled(Grid)`
   max-width: 395px;
   margin-left: auto;
+  padding: 0 0.5rem;
 `;
 
 /**
@@ -48,42 +49,40 @@ const BasicRow: React.FC = ({ children }) => (
     <SpanNoWrap>{children}</SpanNoWrap>
   </RowItem>
 );
-export const About = React.forwardRef<HTMLDivElement, Props>(
-  (
-    { personal: { location, phone, email, links }, headerRadius, padding },
-    ref,
-  ) => {
-    return (
-      <Code code={txt}>
-        <Section
-          title="Connect"
-          outerRef={ref}
-          headerRadius={headerRadius}
-          padding={padding}
-        >
-          <BasicRow>{location}</BasicRow>
-          <RowItem />
-          <BasicRow>{phone}</BasicRow>
-          <BasicRow>{email}</BasicRow>
-          <RowItem />
-          <Links container item>
-            {links.map(link => (
-              <RowItem key={`link-${link[0]}`}>
-                <Grid container item xs={2} alignContent="center">
-                  {icons[link[0]] ? icons[link[0]] : ''}
-                </Grid>
-                <Grid container item xs alignContent="flex-end">
-                  <Link href={link[2]} noWrap variant="body2">
-                    {link[1]}
-                  </Link>
-                </Grid>
-              </RowItem>
-            ))}
-          </Links>
-        </Section>
-      </Code>
-    );
-  },
-);
+export const Connect = React.forwardRef<HTMLDivElement, Props>(function Connect(
+  { personal: { location, phone, email, links }, headerRadius, padding },
+  ref,
+) {
+  return (
+    <Code code={txt}>
+      <Section
+        title="Connect"
+        outerRef={ref}
+        headerRadius={headerRadius}
+        padding={padding}
+      >
+        <BasicRow>{location}</BasicRow>
+        <RowItem />
+        <BasicRow>{phone}</BasicRow>
+        <BasicRow>{email}</BasicRow>
+        <RowItem />
+        <Links container item>
+          {links.map(link => (
+            <RowItem key={`link-${link[0]}`}>
+              <Grid container item xs={2} alignContent="center">
+                {icons[link[0]] ? icons[link[0]] : ''}
+              </Grid>
+              <Grid container item xs alignContent="flex-end">
+                <Link href={link[2]} noWrap variant="body2">
+                  {link[1]}
+                </Link>
+              </Grid>
+            </RowItem>
+          ))}
+        </Links>
+      </Section>
+    </Code>
+  );
+});
 
-export default About;
+export default Connect;
