@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-interface */
 type personal = {
   firstName: string;
   lastName: string;
