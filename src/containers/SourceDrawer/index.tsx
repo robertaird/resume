@@ -2,26 +2,18 @@
  * @module SourceProvider
  * Provides the current active element to consumers, as well as the appropriate setters
  */
-import React, { createContext, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Drawer as MuiDrawer } from '@material-ui/core';
 import CodeView from 'components/CodeView';
 
-const defaultCode = { fileName: '', html: '' };
-
-interface SourceProviderProps {
+interface SourceDrawerProps {
   drawerWidth: number;
-  disabled?: boolean;
-  children: (open: boolean) => React.ReactNode;
-}
-
-interface SourceState {
-  code: typeof defaultCode;
-  setCode:
-    | React.Dispatch<React.SetStateAction<typeof defaultCode>>
-    | (() => void);
   open: boolean;
-  handleOpen: () => void;
+  code: {
+    fileName: string;
+    html: string;
+  };
 }
 
 interface DrawerProps {
@@ -36,39 +28,29 @@ const Drawer = styled(MuiDrawer)<DrawerProps>`
   & .MuiPaper-root {
     overflow: visible;
     width: ${props => props['data-width']}px;
+    pointer-events: auto;
     pointer-events: default;
   }
 `;
 
-export const SourceContext = createContext({
-  code: defaultCode,
-  setCode: () => {},
-  handleOpen: () => {},
-} as SourceState);
-
-// TODO: Create a store for parsed html strings
-const SourceProvider: React.FC<SourceProviderProps> = ({
+const SourceDrawer: React.FC<SourceDrawerProps> = ({
+  open,
+  code = {
+    html: '',
+    fileName: '',
+  },
   drawerWidth,
-  children,
 }) => {
-  const [code, setCode] = useState(defaultCode);
-  const [open, toggleOpen] = useState(false);
-  const handleOpen = () => {
-    toggleOpen(!open);
-  };
   return (
-    <SourceContext.Provider value={{ open, code, setCode, handleOpen }}>
-      {children(open)}
-      <Drawer
-        data-width={drawerWidth}
-        open={open}
-        anchor="right"
-        variant="persistent"
-      >
-        <CodeView html={code.html} fileName={code.fileName} />
-      </Drawer>
-    </SourceContext.Provider>
+    <Drawer
+      data-width={drawerWidth}
+      open={open}
+      anchor="right"
+      variant="persistent"
+    >
+      <CodeView html={code.html} fileName={code.fileName} />
+    </Drawer>
   );
 };
 
-export default SourceProvider;
+export default SourceDrawer;

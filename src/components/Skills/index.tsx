@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { Grid, Typography } from '@material-ui/core';
 import { PaddedTypography, Section } from 'components/Common';
 import Code from 'containers/Code';
-// @ts-ignore
-import txt from '!raw-loader!./index.tsx';
 
 type SectionProps = Pick<
   React.ComponentPropsWithoutRef<typeof Section>,
@@ -26,7 +24,7 @@ export const Skills = React.forwardRef<HTMLDivElement, Props>(function Skills(
   ref,
 ) {
   return (
-    <Code code={txt}>
+    <Code>
       <Section
         title="Technical Skills"
         outerRef={ref}

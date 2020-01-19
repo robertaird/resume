@@ -2,8 +2,6 @@ import React from 'react';
 import { Grid } from '@material-ui/core';
 import { PaddedTypography, Section } from 'components/Common';
 import Code from 'containers/Code';
-// @ts-ignore
-import txt from '!raw-loader!./index.tsx';
 
 type SectionProps = Pick<
   React.ComponentPropsWithoutRef<typeof Section>,
@@ -18,7 +16,7 @@ type Props = {
 export const RelatedExperience = React.forwardRef<HTMLDivElement, Props>(
   function RelatedExperience({ otherExperience, headerRadius, padding }, ref) {
     return (
-      <Code code={txt}>
+      <Code>
         <Section
           title="Related Experience"
           outerRef={ref}

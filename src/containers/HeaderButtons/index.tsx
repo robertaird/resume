@@ -1,11 +1,9 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { Grid, Typography, Switch as MuiSwitch } from '@material-ui/core';
-import { SourceContext } from 'containers/SourceDrawer';
+import { SourceContext } from 'containers/SourceProvider';
 import { ThemeContext } from 'containers/ThemeProvider';
 import Code from 'containers/Code';
-// @ts-ignore
-import txt from '!raw-loader!./index.tsx';
 
 const Switch = styled(MuiSwitch)`
   z-index: 100;
@@ -39,7 +37,7 @@ export const HeaderButtons = React.forwardRef<HTMLDivElement, {}>(
     const { handleOpen } = useContext(SourceContext);
     const { toggleTheme } = useContext(ThemeContext);
     return (
-      <Code code={txt}>
+      <Code>
         <GridContainer ref={ref} container>
           <GridItem container item direction="column">
             <SwitchItem item>

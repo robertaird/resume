@@ -4,6 +4,7 @@ import './style/prism-plastic.css';
 import './App.css';
 import data from './data/resume.json';
 import { ThemeProvider } from 'containers/ThemeProvider';
+import CodeProvider from 'containers/Code/context';
 import Resume from './containers/Resume';
 
 const RootDiv = styled.div`
@@ -15,9 +16,11 @@ const RootDiv = styled.div`
 const App: React.FC = () => {
   return (
     <ThemeProvider>
-      <RootDiv className="App">
-        <Resume data={data} />
-      </RootDiv>
+      <CodeProvider>
+        <RootDiv className="App">
+          <Resume data={data} />
+        </RootDiv>
+      </CodeProvider>
     </ThemeProvider>
   );
 };

@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { Grid as MuiGrid, Typography } from '@material-ui/core';
 import { DARK } from 'style/theme';
 import Code from 'containers/Code';
-// @ts-ignore
-import txt from '!raw-loader!./Section.tsx';
 
 interface Props extends React.HTMLProps<HTMLDivElement> {
   title: string;
@@ -66,7 +64,7 @@ export const Section = React.forwardRef<HTMLDivElement, Props>(function Section(
   ref,
 ) {
   return (
-    <Code code={txt}>
+    <Code>
       <Grid container ref={outerRef} padding={padding}>
         <HeaderDiv
           container

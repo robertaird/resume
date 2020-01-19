@@ -2,8 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { Grid, Typography } from '@material-ui/core';
 import Code from 'containers/Code';
-// @ts-ignore
-import txt from '!raw-loader!./List.tsx';
 
 interface Props {
   /** Array consisting of either strings or arrays of strings */
@@ -12,7 +10,7 @@ interface Props {
   id?: string;
 }
 
-const ListTypography = styled(Typography)`
+const ListTypography: typeof Typography = styled(Typography)`
   width: 100%;
 `;
 
@@ -27,7 +25,7 @@ export const List = React.forwardRef<HTMLUListElement, Props>(function List(
   ref,
 ) {
   return (
-    <Code code={txt}>
+    <Code>
       <Grid ref={ref} item container component="ul">
         {items.map((item, i) => {
           if (Array.isArray(item)) {

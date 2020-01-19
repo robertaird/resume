@@ -3,12 +3,13 @@
  * Provides the current active element to consumers, as well as the appropriate setters
  */
 import React, { createContext, useState } from 'react';
+import { validateState } from 'utils/validateState';
 
 interface ActiveProviderProps {
   disabled?: boolean;
 }
 
-interface ActiveState {
+export interface ActiveState {
   activeEl: string;
   setActive: React.Dispatch<React.SetStateAction<string>> | (() => void);
   addId: (id: string) => number;
@@ -19,14 +20,19 @@ interface ActiveState {
 const ids = [];
 const addId = (id: string) => ids.push(id);
 const idLength = () => ids.length;
-
-export const ActiveContext = createContext({
+const defaultActiveState: ActiveState = {
   activeEl: '',
-  setActive: () => {},
+  setActive() {},
   addId,
   idLength,
   enabled: false,
-} as ActiveState);
+};
+
+export const ActiveContext = createContext(defaultActiveState);
+
+export function validateActiveState(possibleState: object) {
+  return validateState<ActiveState>(defaultActiveState, possibleState);
+}
 
 // TODO: Click + Hold active
 const ActiveProvider: React.FC<ActiveProviderProps> = ({
@@ -34,6 +40,7 @@ const ActiveProvider: React.FC<ActiveProviderProps> = ({
   disabled,
 }) => {
   const [activeEl, setActive] = useState('');
+
   return (
     <ActiveContext.Provider
       value={{ activeEl, setActive, addId, idLength, enabled: !disabled }}

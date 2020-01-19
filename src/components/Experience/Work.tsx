@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { Grid, Typography } from '@material-ui/core';
 import { HeadingGrid, List } from 'components/Common';
 import Code from 'containers/Code';
-// @ts-ignore
-import txt from '!raw-loader!./Work.tsx';
 
 type Props = {
   workItem: workItem;
@@ -34,7 +32,7 @@ export const Work = React.forwardRef<HTMLDivElement, Props>(function Work(
   ref,
 ) {
   return (
-    <Code code={txt}>
+    <Code>
       <Grid ref={ref} container>
         <HeadingGrid
           title={

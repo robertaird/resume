@@ -2,8 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { CardHeader as MuiCardHeader } from '@material-ui/core';
 import Code from 'containers/Code';
-// @ts-ignore
-import txt from '!raw-loader!./index.tsx';
 
 interface Props {
   personal: personal;
@@ -26,7 +24,7 @@ export const Header = React.forwardRef<HTMLDivElement, Props>(function Header(
   ref,
 ) {
   return (
-    <Code code={txt}>
+    <Code>
       <CardHeader
         ref={ref}
         title={`${personal.firstName} ${personal.lastName}`}

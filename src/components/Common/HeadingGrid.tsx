@@ -2,8 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { Grid, Typography } from '@material-ui/core';
 import Code from 'containers/Code';
-// @ts-ignore
-import txt from '!raw-loader!./HeadingGrid.tsx';
 
 type TypographyProps = React.ComponentProps<typeof Typography>;
 
@@ -24,7 +22,7 @@ const DateContainer = styled(Grid)`
 export const HeadingGrid = React.forwardRef<HTMLDivElement, Props>(
   function HeadingGrid({ title, date }, ref) {
     return (
-      <Code code={txt}>
+      <Code>
         <Grid ref={ref} item container xs={12}>
           <TitleContainer item container justify="flex-start">
             {React.cloneElement(title, {

@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { Grid, Typography } from '@material-ui/core';
 import { HeadingGrid, PaddedTypography, Section } from 'components/Common';
 import Code from 'containers/Code';
-// @ts-ignore
-import txt from '!raw-loader!./index.tsx';
 
 type SectionProps = Pick<
   React.ComponentPropsWithoutRef<typeof Section>,
@@ -27,7 +25,7 @@ const TitleTypography = styled(Typography)`
 export const Education = React.forwardRef<HTMLDivElement, Props>(
   function Education({ education, headerRadius, padding }, ref) {
     return (
-      <Code code={txt}>
+      <Code>
         <Section
           title="Education"
           outerRef={ref}

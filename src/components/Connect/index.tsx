@@ -4,8 +4,6 @@ import { Grid, Link } from '@material-ui/core';
 import { Section, SpanNoWrap } from 'components/Common';
 import { Github, LinkedIn } from 'components/icons';
 import Code from 'containers/Code';
-// @ts-ignore
-import txt from '!raw-loader!./index.tsx';
 
 type SectionProps = Pick<
   React.ComponentPropsWithoutRef<typeof Section>,
@@ -54,7 +52,7 @@ export const Connect = React.forwardRef<HTMLDivElement, Props>(function Connect(
   ref,
 ) {
   return (
-    <Code code={txt}>
+    <Code>
       <Section
         title="Connect"
         outerRef={ref}

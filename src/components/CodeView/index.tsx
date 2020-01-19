@@ -28,7 +28,7 @@ const CodeGrid = styled(Grid)`
   line-height: 1.2rem;
 `;
 
-const Typography = styled(MuiTypography)`
+const Typography: typeof MuiTypography = styled(MuiTypography)`
   color: ${props => props.theme.palette.primary.light};
 `;
 
