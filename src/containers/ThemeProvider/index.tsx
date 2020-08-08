@@ -1,14 +1,9 @@
 import React, { Fragment, createContext, useCallback, useState } from 'react';
-import {
-  ThemeProvider as MuiThemeProvider,
-  StylesProvider,
-} from '@material-ui/styles';
-import { CssBaseline } from '@material-ui/core';
-import {
-  ThemeProvider as StyledThemeProvider,
-  createGlobalStyle,
-} from 'styled-components';
-import createTheme, { DARK, LIGHT } from 'style/theme';
+import { styled } from 'imports';
+import { CssBaseline, styles } from 'muiCore';
+import createTheme, { DARK, LIGHT } from '@/style/theme';
+const { ThemeProvider: StyledThemeProvider, createGlobalStyle } = styled;
+const { ThemeProvider: MuiThemeProvider, StylesProvider } = styles;
 
 type themeType = typeof DARK | typeof LIGHT;
 type theme = ReturnType<typeof createTheme>;
@@ -21,8 +16,8 @@ export const ThemeContext = createContext({
 
 const GlobalStyle = createGlobalStyle<{ theme: theme }>`
       body {
-        background: ${props => props.theme.palette.background.default};
-          color: ${props => props.theme.palette.text.primary};
+        background: ${(props) => props.theme.palette.background.default};
+          color: ${(props) => props.theme.palette.text.primary};
         }
 `;
 

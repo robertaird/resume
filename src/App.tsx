@@ -1,10 +1,10 @@
 import React from 'react';
-import styled from 'styled-components';
-import './style/prism-plastic.css';
-import './App.css';
-import data from './data/resume.json';
-import { ThemeProvider } from 'containers/ThemeProvider';
-import Resume from './containers/Resume';
+import { styled } from '@/deps/import.ts';
+import '@/style/prism-plastic.css';
+import '@/App.css';
+import data from '@/data/resume.json';
+import { ThemeProvider } from '@/containers/ThemeProvider/index.tsx';
+import Resume from '@/containers/Resume/index.tsx';
 
 const RootDiv = styled.div`
   display: flex;

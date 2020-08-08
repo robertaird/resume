@@ -4,10 +4,10 @@
  * TODO: Display implementation of this component?
  */
 import React, { Fragment, useContext, useEffect, useState } from 'react';
-import Prism from '../../prism';
-import styled from 'styled-components';
-import { ActiveContext } from 'containers/ActiveProvider';
-import { SourceContext } from 'containers/SourceDrawer';
+import { styled } from 'imports';
+import Prism from '@/prism';
+import { ActiveContext } from '@/containers/ActiveProvider';
+import { SourceContext } from '@/containers/SourceDrawer';
 
 interface Props {
   code: string;
@@ -79,29 +79,31 @@ const HoverArea = styled.div.attrs((props: HoverAreaProps) => ({
     margin: 10 - props['data-adjust'],
   },
 }))<HoverAreaProps>`
-  /* pointer-events: ${props => (props['data-open'] ? 'auto' : 'none')}; */
+  /**
+   pointer-events: ${(props) => (props['data-open'] ? 'auto' : 'none')}; */
   &:hover {
   }
   &:hover div {
     background: #aaaaaa77;
-    border: 2px solid ${props => props.theme.palette.secondary.light};
+    border: 2px solid ${(props) => props.theme.palette.secondary.light};
   }
   /* & div {
     pointer-events: none;
     border-radius: 4px;
-    width: calc(100% + ${props => 10 + props['data-adjust'] * 2}px);
-    height: calc(100% + ${props => 10 + props['data-adjust'] * 2}px);
-    margin-left: -${props => 5 + props['data-adjust']}px;
-    margin-top: -${props => 5 + props['data-adjust']}px;
+    width: calc(100% + ${(props) => 10 + props['data-adjust'] * 2}px);
+    height: calc(100% + ${(props) => 10 + props['data-adjust'] * 2}px);
+    margin-left: -${(props) => 5 + props['data-adjust']}px;
+    margin-top: -${(props) => 5 + props['data-adjust']}px;
   } */
-  /* top: ${props => props['data-top']}px;
-  left: ${props => [props['data-left']]}px;
-  bottom: ${props => props['data-bottom']}px;
-  right: ${props => props['data-right']}px;
-  height: ${props => props['data-height'] - (20 - props['data-adjust'] * 2)}px;
-  width: ${props => props['data-width'] - (20 - props['data-adjust'] * 2)}px;
-  margin: ${props => 10 - props['data-adjust']}px;
-  z-index: ${props =>
+  /* top: ${(props) => props['data-top']}px;
+  left: ${(props) => [props['data-left']]}px;
+  bottom: ${(props) => props['data-bottom']}px;
+  right: ${(props) => props['data-right']}px;
+  height: ${(props) =>
+    props['data-height'] - (20 - props['data-adjust'] * 2)}px;
+  width: ${(props) => props['data-width'] - (20 - props['data-adjust'] * 2)}px;
+  margin: ${(props) => 10 - props['data-adjust']}px;
+  z-index: ${(props) =>
     100 -
     props['data-adjust'] -
     Math.max(0, Math.ceil(props['data-height'] / 5 / props['data-adjust']))}; */

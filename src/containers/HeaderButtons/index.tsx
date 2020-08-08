@@ -1,9 +1,10 @@
 import React, { useContext } from 'react';
-import styled from 'styled-components';
-import { Grid, Typography, Switch as MuiSwitch } from '@material-ui/core';
+import { styled } from 'imports';
+import { Grid, Typography, Switch as MuiSwitch } from 'muiCore';
 import { SourceContext } from 'containers/SourceDrawer';
 import { ThemeContext } from 'containers/ThemeProvider';
 import Code from 'containers/Code';
+// eslint-disable-next-line
 // @ts-ignore
 import txt from '!raw-loader!./index.tsx';
 

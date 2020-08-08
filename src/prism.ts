@@ -1,12 +1,6 @@
-import Prism from 'prismjs';
-import 'prismjs/components/prism-jsx.min';
-import 'prismjs/components/prism-typescript.min';
-import 'prismjs/components/prism-css';
-import 'prismjs/components/prism-css-extras';
-import 'prismjs/plugins/highlight-keywords/prism-highlight-keywords';
-import 'prismjs/plugins/custom-class/prism-custom-class';
+import { Prism } from './deps/import.ts';
 
-Prism.plugins.customClass.map(function(className: string, language: string) {
+Prism.plugins.customClass.map(function (className: string, language: string) {
   if (language === 'css') {
     return `${className}.css`;
   } else {

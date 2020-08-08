@@ -1,0 +1,11 @@
+{
+  "imports": {
+    "@/": "./",
+    "csstype": "../node_modules/csstype/index.d.ts",
+    "hoist-non-react-statics": "../node_modules/@types/hoist-non-react-statics/index.d.ts",
+    "@material-ui/types": "../node_modules/@material-ui/types/index.d.ts",
+    "imports": "./deps/import.ts",
+    "muiCore": "./deps/mui.ts",
+    "react": "./deps/react.ts"
+  }
+}
