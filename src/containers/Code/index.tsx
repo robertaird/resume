@@ -8,9 +8,10 @@ import React, {
   useLayoutEffect,
   useState,
 } from 'react';
+import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import {
-  cleanCode,
+  // cleanCode,
   cleanup,
   calculateZIndex,
   getTreeDepth,
@@ -76,11 +77,12 @@ const HoverPath = styled.h5.attrs((props: HoverFilePathProps) => ({
   style: {
     display: props.open ? '' : 'none',
     width: props.width,
-    marginLeft: -(props.adjust / 2),
+    // marginLeft: -(props.adjust / 2),
   },
 }))<HoverFilePathProps>`
   position: absolute;
   margin: 0;
+  max-width: 50vw;
   top: 0;
   left: 5px;
   white-space: nowrap;
@@ -90,11 +92,13 @@ const HoverPath = styled.h5.attrs((props: HoverFilePathProps) => ({
 const HoverDiv = styled.div.attrs((props: HoverAreaProps) => ({
   style: {
     display: props.open ? '' : 'none',
-    marginLeft: -(props['data-adjust'] / 2),
+    // marginLeft: -(props['data-adjust'] / 2),
     width: `calc(100% + ${props['data-adjust']}px)`,
+    // width: `calc(100% - ${props['data-adjust']}px)`,
     height: props['data-height'],
   },
 }))<HoverAreaProps>`
+  max-width: 100vw;
   pointer-events: none;
   border-radius: 4px;
 `;
@@ -103,16 +107,17 @@ const HoverArea = styled.div.attrs((props: HoverAreaProps) => ({
   style: {
     pointerEvents: props['open'] ? 'auto' : 'none',
     zIndex: props['data-z-index'],
-    top: props['data-top'] + props['data-adjust'],
-    left: props['data-left'] + props['data-adjust'] * 1.5,
-    right: props['data-right'] + props['data-adjust'],
+    transform: `translate(${props['data-left']}px, ${props['data-top']}px)`,
     height: props['data-height'] - props['data-adjust'] / 2,
     width: props['data-width'] - props['data-adjust'],
-    margin: -props['data-adjust'],
+    // top: props['data-top'] + props['data-adjust'],
+    // left: props['data-left'] + props['data-adjust'] * 1.5,
+    // right: props['data-right'] + props['data-adjust'],
+    // margin: -props['data-adjust'],
   },
 }))<HoverAreaProps>`
-  transition: all 0.25s ease;
-  transition-property: left, top;
+  transition: transform 300ms linear;
+  will-change: transform;
   &:hover {
   }
   &:hover h5 {
@@ -120,10 +125,10 @@ const HoverArea = styled.div.attrs((props: HoverAreaProps) => ({
   }
   &:hover div {
     background: #aaaaaa77;
-    border: 3px solid ${props => props.theme.palette.primary.light};
+    border: 3px solid ${(props) => props.theme.palette.primary.light};
   }
   & div {
-    border: 1px solid ${props => props.theme.palette.secondary.dark};
+    border: 1px solid ${(props) => props.theme.palette.secondary.dark};
     background: #aaaaaa22;
     border-radius: 4px;
     margin-top: 0px;
@@ -131,6 +136,7 @@ const HoverArea = styled.div.attrs((props: HoverAreaProps) => ({
   position: absolute;
 `;
 
+const mountNode = document.getElementById('root') as HTMLElement;
 /**
  * Little helper component to hold any refs passed to the Code component.
  */
@@ -140,23 +146,25 @@ const CodeChildren = React.forwardRef(
     ref: React.Ref<HTMLDivElement>,
   ) => (
     <Fragment>
-      <HoverArea ref={ref} open={open} {...props}>
-        <HoverPath
-          open={open}
-          width={props['data-width']}
-          adjust={props['data-adjust']}
-        >
-          {fileName}
-        </HoverPath>
-        <HoverDiv open={open} {...props} />
-      </HoverArea>
+      {ReactDOM.createPortal(
+        <HoverArea ref={ref} open={open} {...props}>
+          <HoverPath
+            open={open}
+            width={props['data-width']}
+            adjust={props['data-adjust']}
+          >
+            {fileName}
+          </HoverPath>
+          <HoverDiv open={open} {...props} />
+        </HoverArea>,
+        mountNode,
+      )}
       {children}
     </Fragment>
   ),
 );
 
-const htmlPipeline = (code: string | null) =>
-  cleanup(parseStyled(cleanCode(code)));
+const htmlPipeline = (code: string | null) => cleanup(parseStyled(code));
 
 const mapElement = (
   el: HTMLElement,
@@ -174,8 +182,16 @@ const mapElement = (
     offsetLeft: el.offsetLeft,
   });
 };
-
 export const Code: React.FC<CodeProps> = ({ children }) => {
+  /**
+   * TODO: ActiveContext and SourceContet are kind of confusing. One of them
+   * TODO: tracks the element and the other the code string.
+   * TODO: Does this really make sense?
+   *
+   * It might just need a logic cleanup.
+   * Maybe ActiveContext becomes ActiveElementContext, and SourceContext becomes
+   * ActiveSourceContext.
+   */
   const { sourceStore, addSource, ActiveContext, SourceContext } = useContext(
     CodeContext,
   );
@@ -183,23 +199,11 @@ export const Code: React.FC<CodeProps> = ({ children }) => {
     ? relativeFileName(children._source.fileName)
     : '';
   const code = sourceStore[fileName] || null;
-  useEffect(() => {
-    if (fileName.endsWith('.tsx') && !sourceStore[fileName]) {
-      import(
-        `!raw-loader!../../../${fileName.substring(0, fileName.length - 4)}.tsx`
-      ).then(({ default: txt }) => {
-        addSource(fileName, txt);
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fileName, sourceStore]);
-
   const [html, setHtml] = useState(htmlPipeline(code));
-
   const { activeEl, setActive, addId, idLength } = useContext(ActiveContext);
   const { open, setCode } = useContext(SourceContext);
   const [id, setId] = useState('');
-  const [treeDepth] = useState(getTreeDepth(children));
+  const [treeDepth] = useState(() => getTreeDepth(children));
   const [dimensions, setDimensions] = useState<Dimensions>({
     width: 0,
     height: 0,
@@ -224,6 +228,18 @@ export const Code: React.FC<CodeProps> = ({ children }) => {
   );
 
   useEffect(() => {
+    if (fileName.endsWith('.tsx') && !sourceStore[fileName]) {
+      /** Dynamic importing. Yusssssss */
+      import(
+        `!raw-loader!../../../${fileName.substring(0, fileName.length - 4)}.tsx`
+      ).then(({ default: txt }) => {
+        addSource(fileName, txt);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fileName, sourceStore]);
+
+  useEffect(() => {
     if (!id) {
       setId(`code-key-${idLength() + 1}`);
       addId(id);
@@ -231,7 +247,6 @@ export const Code: React.FC<CodeProps> = ({ children }) => {
   }, [id, setId, addId, idLength]);
 
   useEffect(() => {
-    // setOpen(activeEl === id);
     if (activeEl === id) {
       if (html !== null) {
         setCode({ fileName, html });
@@ -245,16 +260,17 @@ export const Code: React.FC<CodeProps> = ({ children }) => {
     // Giving a little time for the drawer animation to complete before re-setting.
     if (childRef.current instanceof Element) {
       const el = childRef.current;
-      const rectangle = el.getBoundingClientRect();
-      // mapElement(el, rectangle, setDimensions);
       setTimeout(() => {
+        const rectangle = el.getBoundingClientRect();
         if (
           dimensions.width !== rectangle.width ||
-          dimensions.height !== rectangle.height
+          dimensions.height !== rectangle.height ||
+          dimensions.left !== rectangle.left ||
+          dimensions.top !== rectangle.top
         ) {
           mapElement(el, rectangle, setDimensions);
         }
-      }, 200);
+      }, 0);
     }
   }, [open, childRef, dimensions, setDimensions]);
 

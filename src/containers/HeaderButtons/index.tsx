@@ -32,7 +32,7 @@ const SwitchTypography = styled(Typography)`
   }
 `;
 
-export const HeaderButtons = React.forwardRef<HTMLDivElement, {}>(
+export const HeaderButtons = React.forwardRef<HTMLDivElement>(
   function HeaderButtons(_props, ref) {
     const { handleOpen } = useContext(SourceContext);
     const { toggleTheme } = useContext(ThemeContext);

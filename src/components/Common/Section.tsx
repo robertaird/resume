@@ -33,13 +33,13 @@ function setHeaderRadius(option?: headerRadiusOptions) {
 }
 
 const Grid = styled(MuiGrid)<GridProps>`
-  padding: ${props => props.padding || '2px 4px 8px'};
+  padding: ${(props) => props.padding || '2px 4px 8px'};
   height: max-content;
 `;
 
 const HeaderDiv = styled(MuiGrid)<HeaderProps>`
-  border-radius: ${props => setHeaderRadius(props['data-headerradius'])};
-  background: ${props =>
+  border-radius: ${(props) => setHeaderRadius(props['data-headerradius'])};
+  background: ${(props) =>
     props.theme.palette.type === DARK
       ? props.theme.palette.primary.dark
       : props.theme.palette.primary.light};
@@ -55,7 +55,7 @@ const HeaderText = styled(Typography)`
   font-size: 1.05rem;
   text-transform: uppercase;
   @media print {
-    color: ${props => props.theme.palette.text.primary} !important;
+    color: ${(props) => props.theme.palette.text.primary} !important;
   }
 `;
 

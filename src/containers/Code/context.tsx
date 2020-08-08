@@ -118,8 +118,9 @@ const checkContext = (current: null | CodeProviderRefs) =>
 
 const CodeProvider: React.FC = ({ children }) => {
   const [sourceStore, setStore] = useState<codeStore>(defaultStore);
-  const addSource = defaultContext.initAddSource.bind(defaultContext, setStore);
   const [contexts, setContexts] = useState<null | CodeProviderRefs>(null);
+  const addSource = defaultContext.initAddSource.bind(defaultContext, setStore);
+  // TODO: probably rename?
   function getContext() {
     setContexts({
       ActiveContext: _ActiveContext,

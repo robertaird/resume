@@ -30,7 +30,7 @@ const defaultActiveState: ActiveState = {
 
 export const ActiveContext = createContext(defaultActiveState);
 
-export function validateActiveState(possibleState: object) {
+export function validateActiveState(possibleState: any) {
   return validateState<ActiveState>(defaultActiveState, possibleState);
 }
 

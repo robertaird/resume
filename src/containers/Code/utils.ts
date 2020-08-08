@@ -14,6 +14,8 @@ export function isSingleChild(
   return children.hasOwnProperty('props');
 }
 /**
+ * This was for an earlier iteration of the Code element, which involved using
+ * Webpack's raw-loader in the file itself rather than as an inline import.
  * Removing all the extra stuff I added to the code to create the code
  * blocks.
  */
@@ -61,6 +63,7 @@ export const parseStyled = (
   // should probably check for index of 'styled.' or 'styled(' instead
   const styledDeclaration = code.indexOf('styled', startIndex);
   const templateStart = code.indexOf('`', styledDeclaration) + 1;
+  // What happens here if I'm nesting templates? Probably nothing good.
   const templateEnd = code.indexOf('`', templateStart + 1);
 
   if (styledDeclaration > -1 && templateStart > -1 && templateEnd > -1) {
@@ -71,7 +74,7 @@ export const parseStyled = (
         'tsx',
       ) +
       templateTag +
-      // TODO: Parse out '${' to '}' for styling ts blocks
+      // TODO: Parse out '${' to '}' for styling further ts blocks
       `<span class="css-block">${Prism.highlight(
         code.substring(templateStart, templateEnd),
         Prism.languages.css,
@@ -101,8 +104,8 @@ export const replaceSpan = (el: HTMLElement) => {
 };
 
 /**
- * Prism is missing some of my code. This is my overkill solution for
- * getting it to take another look.
+ * Prism is missing some code, probably due to the slicing being done.
+ * This is my overkill solution for getting it to take another look.
  * @param code
  */
 export const cleanup = (code: string | null) => {

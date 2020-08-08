@@ -46,6 +46,7 @@ module.exports = {
         'no-array-constructor': 'off',
         '@typescript-eslint/no-array-constructor': 'warn',
         'no-use-before-define': 'off',
+        '@typescript-eslint/explicit-module-boundary-types': 0,
         '@typescript-eslint/no-use-before-define': [
           'warn',
           {

@@ -1,24 +1,26 @@
 /**
  * @module SourceProvider
- * Provides the current active element to consumers, as well as the appropriate setters
+ * Provides the current active source code to consumers, as well as the appropriate setters
  */
 import React, { createContext, useState } from 'react';
 import { validateState } from 'utils/validateState';
 
-type code = {
+export type code = {
   fileName: string;
   html: string;
+  // parsed: string;
 };
+
 interface SourceProviderProps {
   children: (open: boolean, code: code) => React.ReactNode;
 }
 
 export type SourceState = {
   code: code;
+  open: boolean;
   setCode:
     | React.Dispatch<React.SetStateAction<typeof defaultCode>>
     | (() => void);
-  open: boolean;
   handleOpen: () => void;
 };
 
@@ -26,16 +28,14 @@ const defaultCode = { fileName: '', html: '' };
 const defaultOpen = false;
 const defaultSourceState: SourceState = {
   code: defaultCode,
-  /* eslint-disable @typescript-eslint/no-empty-function */
-  setCode: () => {},
-  handleOpen: () => {},
-  /* eslint-enable */
   open: defaultOpen,
+  handleOpen() {},
+  setCode() {},
 };
 
 export const SourceContext = createContext(defaultSourceState);
 
-export function validateSourceState(possibleState: object) {
+export function validateSourceState(possibleState: any) {
   return validateState<SourceState>(defaultSourceState, possibleState);
 }
 

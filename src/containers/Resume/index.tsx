@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Container, Grid, Paper as MuiPaper } from '@material-ui/core';
 import ActiveProvider from 'containers/ActiveProvider';
-import SourceProvider from 'containers/SourceProvider';
+// import SourceProvider from 'containers/SourceProvider';
 import SourceDrawer from 'containers/SourceDrawer';
 import Code from 'containers/Code';
 import { HeaderButtons } from 'containers/HeaderButtons';
@@ -16,6 +16,8 @@ import RelatedExperience from 'components/RelatedExperience';
 
 interface ResumeProps {
   data: resume;
+  code: import('containers/SourceProvider').code;
+  open: boolean;
 }
 
 interface ResumeState {
@@ -31,7 +33,7 @@ interface RootProps {
 const drawerWidth = 625;
 
 const Root = styled(Container)<{ open: boolean }>`
-  ${props =>
+  ${(props) =>
     props.open
       ? `
     max-width: inherit;
@@ -45,9 +47,9 @@ const Root = styled(Container)<{ open: boolean }>`
 
 const MainContent = styled.div<RootProps>`
   flex-grow: 1;
-  margin-right: ${props =>
+  margin-right: ${(props) =>
     props['data-shift'] ? 0 : -props['data-drawer-width']}px;
-  transition: ${props =>
+  transition: ${(props) =>
     props['data-shift']
       ? props.theme.transitions.create('margin', {
           easing: props.theme.transitions.easing.easeOut,
@@ -64,12 +66,12 @@ const Col = styled(Grid)`
   max-width: revert;
 `;
 
-const LeftCol = styled(Col)`
+const DetailsCol = styled(Col)`
   min-width: 135px;
 `;
 
-const RightCol = styled(Col)`
-  order: -1;
+const MainCol = styled(Col)`
+  order: 1;
   min-width: 430px;
 `;
 
@@ -79,58 +81,48 @@ const Paper = styled(MuiPaper)`
 
 class Resume extends React.PureComponent<ResumeProps, ResumeState> {
   render() {
-    const { data } = this.props;
+    const { data, open, code } = this.props;
     return (
-      <SourceProvider>
-        {(open, code) => (
-          <Code>
-            <Root open={open}>
-              <ActiveProvider disabled={!open}>
-                <MainContent data-shift={open} data-drawer-width={drawerWidth}>
-                  <Header personal={data.personal} action={<HeaderButtons />} />
-                  <Grid container direction="row-reverse">
-                    <LeftCol container item xs={12} md={3}>
-                      <Paper elevation={0}>
-                        <Connect
-                          personal={data.personal}
-                          headerRadius="top"
-                          padding="0 0 8px;"
-                        />
-                        <About
-                          personal={data.personal}
-                          headerRadius="none"
-                          padding="2px 0 8px;"
-                        />
-                        <Skills
-                          professionalSkills={data.professionalSkills}
-                          headerRadius="none"
-                          padding="2px 0 8px;"
-                        />
-                        <Education
-                          education={data.education}
-                          headerRadius="none"
-                          padding="2px 0 8px;"
-                        />
-                      </Paper>
-                    </LeftCol>
-                    <RightCol container item xs={12} md={9}>
-                      <Experience experience={data.experience} />
-                      <RelatedExperience
-                        otherExperience={data.experience.other}
-                      />
-                    </RightCol>
-                  </Grid>
-                </MainContent>
-                <SourceDrawer
-                  open={open}
-                  code={code}
-                  drawerWidth={drawerWidth}
-                />
-              </ActiveProvider>
-            </Root>
-          </Code>
-        )}
-      </SourceProvider>
+      <Code>
+        <Root open={open}>
+          <ActiveProvider disabled={!open}>
+            <MainContent data-shift={open} data-drawer-width={drawerWidth}>
+              <Header personal={data.personal} action={<HeaderButtons />} />
+              <Grid container direction="row-reverse">
+                <DetailsCol container item xs={12} md={3}>
+                  <Paper elevation={0}>
+                    <Connect
+                      personal={data.personal}
+                      headerRadius="top"
+                      padding="0 0 8px;"
+                    />
+                    <About
+                      personal={data.personal}
+                      headerRadius="none"
+                      padding="2px 0 8px;"
+                    />
+                    <Skills
+                      professionalSkills={data.professionalSkills}
+                      headerRadius="none"
+                      padding="2px 0 8px;"
+                    />
+                    <Education
+                      education={data.education}
+                      headerRadius="none"
+                      padding="2px 0 8px;"
+                    />
+                  </Paper>
+                </DetailsCol>
+                <MainCol container item xs={12} md={9}>
+                  <Experience experience={data.experience} />
+                  <RelatedExperience otherExperience={data.experience.other} />
+                </MainCol>
+              </Grid>
+            </MainContent>
+            <SourceDrawer open={open} code={code} drawerWidth={drawerWidth} />
+          </ActiveProvider>
+        </Root>
+      </Code>
     );
   }
 }

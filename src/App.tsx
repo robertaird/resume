@@ -5,6 +5,7 @@ import './App.css';
 import data from './data/resume.json';
 import { ThemeProvider } from 'containers/ThemeProvider';
 import CodeProvider from 'containers/Code/context';
+import SourceProvider from 'containers/SourceProvider';
 import Resume from './containers/Resume';
 
 const RootDiv = styled.div`
@@ -17,9 +18,13 @@ const App: React.FC = () => {
   return (
     <ThemeProvider>
       <CodeProvider>
-        <RootDiv className="App">
-          <Resume data={data} />
-        </RootDiv>
+        <SourceProvider>
+          {(open, code) => (
+            <RootDiv className="App">
+              <Resume open={open} code={code} data={data} />
+            </RootDiv>
+          )}
+        </SourceProvider>
       </CodeProvider>
     </ThemeProvider>
   );

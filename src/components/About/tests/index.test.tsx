@@ -4,6 +4,6 @@ import About from '../index';
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
-  ReactDOM.render(<About />, div);
+  ReactDOM.render(<About personal={{} as any} />, div);
   ReactDOM.unmountComponentAtNode(div);
 });

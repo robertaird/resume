@@ -10,10 +10,7 @@ import CodeView from 'components/CodeView';
 interface SourceDrawerProps {
   drawerWidth: number;
   open: boolean;
-  code: {
-    fileName: string;
-    html: string;
-  };
+  code: import('containers/SourceProvider').code;
 }
 
 interface DrawerProps {
@@ -22,12 +19,12 @@ interface DrawerProps {
 
 const Drawer = styled(MuiDrawer)<DrawerProps>`
   text-align: left;
-  min-width: ${props => props['data-width']}px;
+  min-width: ${(props) => props['data-width']}px;
   flex-shrink: 0;
   pointer-events: none;
   & .MuiPaper-root {
     overflow: visible;
-    width: ${props => props['data-width']}px;
+    width: ${(props) => props['data-width']}px;
     pointer-events: auto;
     pointer-events: default;
   }

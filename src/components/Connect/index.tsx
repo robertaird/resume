@@ -65,7 +65,7 @@ export const Connect = React.forwardRef<HTMLDivElement, Props>(function Connect(
         <BasicRow>{email}</BasicRow>
         <RowItem />
         <Links container item>
-          {links.map(link => (
+          {links.map((link) => (
             <RowItem key={`link-${link[0]}`}>
               <Grid container item xs={2} alignContent="center">
                 {icons[link[0]] ? icons[link[0]] : ''}
