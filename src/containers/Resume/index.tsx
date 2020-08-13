@@ -1,13 +1,17 @@
-import React from 'react';
-import styled from 'styled-components';
-import { Container, Grid, Paper as MuiPaper } from '@material-ui/core';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import styled, { css } from 'styled-components';
+import {
+  Container,
+  Grid,
+  Paper as MuiPaper,
+  useTheme,
+} from '@material-ui/core';
 import ActiveProvider from 'containers/ActiveProvider';
-// import SourceProvider from 'containers/SourceProvider';
 import SourceDrawer from 'containers/SourceDrawer';
 import Code from 'containers/Code';
 import { HeaderButtons } from 'containers/HeaderButtons';
 import Header from 'components/Header';
-import Connect from 'components/Connect';
+import { Connect } from 'components/Connect';
 import About from 'components/About';
 import Skills from 'components/Skills';
 import Education from 'components/Education';
@@ -33,32 +37,37 @@ interface RootProps {
 const drawerWidth = 625;
 
 const Root = styled(Container)<{ open: boolean }>`
+  max-width: 70rem;
+  left: 0;
+  right: 0;
+  position: absolute;
+  display: flex;
+  padding: 0px;
   ${(props) =>
     props.open
-      ? `
-    max-width: inherit;
-    margin-left: 0px;
-    margin-right: 0px;
-  `
+      ? css`
+          max-width: inherit;
+          margin-left: 0px;
+          margin-right: 0px;
+        `
       : ''}
-  padding: 20px;
-  display: flex;
 `;
 
 const MainContent = styled.div<RootProps>`
+  max-width: 68rem;
+  padding: 20px;
   flex-grow: 1;
+  display: grid;
+  grid-gap: 0 2.5rem;
+  grid-template-columns: 3fr minmax(200px, 1fr);
+  grid-template-rows: auto auto 1fr;
+  @media screen and (max-width: ${({ theme }) =>
+      theme.breakpoints.values.md - 1}px) {
+    grid-template-columns: 1fr;
+  }
+  /* will-change: margin-right; */
   margin-right: ${(props) =>
     props['data-shift'] ? 0 : -props['data-drawer-width']}px;
-  transition: ${(props) =>
-    props['data-shift']
-      ? props.theme.transitions.create('margin', {
-          easing: props.theme.transitions.easing.easeOut,
-          duration: props.theme.transitions.duration.enteringScreen,
-        })
-      : props.theme.transitions.create('margin', {
-          easing: props.theme.transitions.easing.sharp,
-          duration: props.theme.transitions.duration.leavingScreen,
-        })};
 `;
 
 const Col = styled(Grid)`
@@ -71,7 +80,7 @@ const DetailsCol = styled(Col)`
 `;
 
 const MainCol = styled(Col)`
-  order: 1;
+  order: 0;
   min-width: 430px;
 `;
 
@@ -79,52 +88,65 @@ const Paper = styled(MuiPaper)`
   margin: 2px;
 `;
 
-class Resume extends React.PureComponent<ResumeProps, ResumeState> {
-  render() {
-    const { data, open, code } = this.props;
-    return (
-      <Code>
-        <Root open={open}>
-          <ActiveProvider disabled={!open}>
-            <MainContent data-shift={open} data-drawer-width={drawerWidth}>
-              <Header personal={data.personal} action={<HeaderButtons />} />
-              <Grid container direction="row-reverse">
-                <DetailsCol container item xs={12} md={3}>
-                  <Paper elevation={0}>
-                    <Connect
-                      personal={data.personal}
-                      headerRadius="top"
-                      padding="0 0 8px;"
-                    />
-                    <About
-                      personal={data.personal}
-                      headerRadius="none"
-                      padding="2px 0 8px;"
-                    />
-                    <Skills
-                      professionalSkills={data.professionalSkills}
-                      headerRadius="none"
-                      padding="2px 0 8px;"
-                    />
-                    <Education
-                      education={data.education}
-                      headerRadius="none"
-                      padding="2px 0 8px;"
-                    />
-                  </Paper>
-                </DetailsCol>
-                <MainCol container item xs={12} md={9}>
-                  <Experience experience={data.experience} />
-                  <RelatedExperience otherExperience={data.experience.other} />
-                </MainCol>
-              </Grid>
-            </MainContent>
-            <SourceDrawer open={open} code={code} drawerWidth={drawerWidth} />
-          </ActiveProvider>
-        </Root>
-      </Code>
-    );
-  }
+function Resume({ data, open: shouldOpen, code }: ResumeProps) {
+  const [open, setOpen] = useState(shouldOpen);
+  const theme = useTheme();
+  const requestRef = useRef<number | null>(null);
+  const animate = useCallback(() => {
+    if (shouldOpen !== open) {
+      setOpen(shouldOpen);
+    }
+    requestRef.current = requestAnimationFrame(animate);
+  }, [shouldOpen, open, setOpen]);
+
+  useEffect(() => {
+    requestRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (typeof requestRef.current === 'number')
+        cancelAnimationFrame(requestRef.current);
+    };
+  }, [animate]);
+  return (
+    <Code>
+      <Root id="main-resume" className={theme.palette.type} open={open}>
+        <ActiveProvider disabled={!open}>
+          <MainContent data-shift={open} data-drawer-width={drawerWidth}>
+            <HeaderButtons />
+            <Header personal={data.personal} />
+            <Connect personal={data.personal} />
+            <MainCol container item xs={12} md={9}>
+              <Experience experience={data.experience} />
+            </MainCol>
+            <DetailsCol container item xs={12} md={3}>
+              <Paper elevation={0}>
+                <About
+                  personal={data.personal}
+                  headerRadius="top"
+                  padding="0 0 8px;"
+                />
+                <Skills
+                  professionalSkills={data.professionalSkills}
+                  headerRadius="none"
+                  padding="2px 0 8px;"
+                />
+                <RelatedExperience
+                  otherExperience={data.experience.other}
+                  headerRadius="none"
+                  padding="2px 0 8px;"
+                />
+                <Education
+                  education={data.education}
+                  headerRadius="none"
+                  padding="2px 0 8px;"
+                />
+              </Paper>
+            </DetailsCol>
+          </MainContent>
+          <SourceDrawer open={open} code={code} drawerWidth={drawerWidth} />
+        </ActiveProvider>
+      </Root>
+    </Code>
+  );
 }
 
 export default Resume;

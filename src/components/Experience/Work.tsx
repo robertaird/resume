@@ -18,7 +18,8 @@ const NameTypography = styled(BaseHeadingTypography)`
 `;
 
 const TitleTypography = styled(BaseHeadingTypography)`
-  font-style: italic;
+  font-variant: unicase;
+  font-weight: 600;
 `;
 
 export const Work = React.forwardRef<HTMLDivElement, Props>(function Work(

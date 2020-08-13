@@ -21,10 +21,18 @@ const Drawer = styled(MuiDrawer)<DrawerProps>`
   text-align: left;
   min-width: ${(props) => props['data-width']}px;
   flex-shrink: 0;
+  flex-grow: 1;
+  overflow: hidden;
   pointer-events: none;
   & .MuiPaper-root {
+    height: 100vh;
+    position: sticky;
     overflow: visible;
-    width: ${(props) => props['data-width']}px;
+    top: 0;
+    bottom: 0;
+    z-index: 10000;
+    width: inherit;
+    min-width: ${(props) => props['data-width']}px;
     pointer-events: auto;
     pointer-events: default;
   }

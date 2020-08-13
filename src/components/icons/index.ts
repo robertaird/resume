@@ -1,2 +1,10 @@
+export { LocationCity, Email, Phone } from '@material-ui/icons';
+export { default as AugAug } from './AugAug';
+export { default as FebAug } from './FebAug';
+export { default as AugPres } from './AugPres';
 export { default as Github } from './Github';
 export { default as LinkedIn } from './LinkedIn';
+export { default as Name } from './Name';
+export { default as SE } from './SE';
+export { default as JSE } from './JSE';
+export { default as Subtitle } from './Subtitle';

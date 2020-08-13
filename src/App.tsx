@@ -15,8 +15,9 @@ const RootDiv = styled.div`
 `;
 
 const App: React.FC = () => {
+  const queryParams = new URLSearchParams(window.location.search);
   return (
-    <ThemeProvider>
+    <ThemeProvider disableResponsive={queryParams.get('no-responsive')}>
       <CodeProvider>
         <SourceProvider>
           {(open, code) => (

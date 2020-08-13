@@ -14,7 +14,8 @@ const RootGrid = styled(Grid)`
 `;
 
 const CodeGrid = styled(Grid)`
-  height: calc(100% - 70px);
+  height: calc(100% - 65px);
+  flex: 1;
   font-family: 'Inconsolata', monospace;
   overflow-x: hidden;
   overflow-y: auto;

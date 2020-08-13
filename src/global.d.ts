@@ -1,11 +1,8 @@
 type personal = {
   firstName: string;
   lastName: string;
-  location: string;
   title: string;
-  phone: string;
-  email: string;
-  links: string[][];
+  contact: string[][];
   about: string[];
 };
 

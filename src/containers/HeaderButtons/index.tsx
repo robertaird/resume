@@ -6,12 +6,14 @@ import { ThemeContext } from 'containers/ThemeProvider';
 import Code from 'containers/Code';
 
 const Switch = styled(MuiSwitch)`
-  z-index: 100;
+  z-index: 1000;
 `;
 
 const GridContainer = styled(Grid)`
+  grid-column: 1/-1;
   width: 200px;
-  margin-top: 16px;
+  margin-left: auto;
+  margin-bottom: 16px;
 `;
 
 const GridItem = styled(Grid)`
@@ -38,24 +40,24 @@ export const HeaderButtons = React.forwardRef<HTMLDivElement>(
     const { toggleTheme } = useContext(ThemeContext);
     return (
       <Code>
-        <GridContainer ref={ref} container>
+        <GridContainer ref={ref} id="togglers" container>
           <GridItem container item direction="column">
             <SwitchItem item>
               <Switch size="small" onChange={handleOpen} />
             </SwitchItem>
             <Grid item>
               <SwitchTypography color="textSecondary" variant="caption">
-                Toggle Inspector
+                Code Inspector
               </SwitchTypography>
             </Grid>
           </GridItem>
           <GridItem container item direction="column">
             <SwitchItem item>
-              <Switch size="small" onChange={toggleTheme} />
+              <Switch id="toggle-theme" size="small" onChange={toggleTheme} />
             </SwitchItem>
             <Grid item>
               <SwitchTypography color="textSecondary" variant="caption">
-                Toggle Theme
+                Theme
               </SwitchTypography>
             </Grid>
           </GridItem>

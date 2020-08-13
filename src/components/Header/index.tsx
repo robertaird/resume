@@ -1,12 +1,50 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { Fragment } from 'react';
+import styled, { css } from 'styled-components';
 import { CardHeader as MuiCardHeader } from '@material-ui/core';
+import { Name as BaseName, Subtitle as BaseSubtitle } from 'components/icons';
 import Code from 'containers/Code';
 
 interface Props {
   personal: personal;
   action?: React.ReactNode;
 }
+
+type InvisiTextProps = {
+  top?: string;
+};
+
+const InvisiText = styled.span<InvisiTextProps>`
+  ${({ top }) =>
+    top
+      ? css`
+          top: ${top}px;
+        `
+      : ''}
+  left: -2px;
+  font-weight: 800;
+  font-size: 1.2rem;
+  position: absolute;
+  color: transparent;
+`;
+
+const Name = styled(BaseName)`
+  width: -webkit-fill-available;
+  max-height: -webkit-fill-available;
+  height: 72pt;
+  padding-left: 7px;
+`;
+
+const SubtitleSVG = styled(BaseSubtitle)`
+  height: 1rem;
+  width: unset;
+`;
+
+const Subtitle = ({ children }: { children: React.ReactNode }) => (
+  <Fragment>
+    <InvisiText>{children}</InvisiText>
+    <SubtitleSVG />
+  </Fragment>
+);
 
 const CardHeader = styled(MuiCardHeader)`
   & .MuiCardHeader-avatar {
@@ -15,10 +53,29 @@ const CardHeader = styled(MuiCardHeader)`
   }
 
   &.MuiCardHeader-root {
-    padding: 6px 8px;
+    min-height: 140px;
+    position: relative;
+    padding: 6px 0 16px 6px;
+    align-items: flex-end;
+  }
+  & .MuiCardHeader-title,
+  & .MuiCardHeader-subheader {
+    line-height: 0.95em;
+  }
+  & .MuiCardHeader-subheader {
+    font-size: 0.9rem;
+    text-indent: 0.5em;
+  }
+  & .MuiCardHeader-action {
+    align-self: center;
   }
 `;
 
+const subheaderProps = {
+  variant: 'overline',
+  color: 'secondary',
+  align: 'left',
+} as const;
 export const Header = React.forwardRef<HTMLDivElement, Props>(function Header(
   { personal, action },
   ref,
@@ -27,14 +84,12 @@ export const Header = React.forwardRef<HTMLDivElement, Props>(function Header(
     <Code>
       <CardHeader
         ref={ref}
-        title={`${personal.firstName} ${personal.lastName}`}
-        titleTypographyProps={{
-          color: 'primary',
-          variant: 'h4',
-          align: 'left',
-        }}
-        subheaderTypographyProps={{ variant: 'subtitle1', align: 'left' }}
-        subheader={personal.title}
+        avatar={
+          <InvisiText top="0">{`${personal.firstName} ${personal.lastName}`}</InvisiText>
+        }
+        title={<Name color="primary" />}
+        subheaderTypographyProps={subheaderProps}
+        subheader={<Subtitle>{personal.title}</Subtitle>}
         action={action}
       />
     </Code>

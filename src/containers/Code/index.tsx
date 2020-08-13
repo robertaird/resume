@@ -6,10 +6,12 @@ import React, {
   useContext,
   useEffect,
   useLayoutEffect,
+  useRef,
   useState,
 } from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
+import { useImmer, Updater } from 'use-immer';
 import {
   // cleanCode,
   cleanup,
@@ -117,7 +119,7 @@ const HoverArea = styled.div.attrs((props: HoverAreaProps) => ({
   },
 }))<HoverAreaProps>`
   transition: transform 300ms linear;
-  will-change: transform;
+  /* will-change: transform; */
   &:hover {
   }
   &:hover h5 {
@@ -168,18 +170,23 @@ const htmlPipeline = (code: string | null) => cleanup(parseStyled(code));
 
 const mapElement = (
   el: HTMLElement,
-  rectangle: DOMRect,
-  setter: (dimensions: Dimensions) => void,
+  rectangle: Partial<DOMRect>,
+  setter: Updater<Dimensions>,
 ) => {
-  setter({
-    width: rectangle.width,
-    height: rectangle.height,
-    top: rectangle.top + window.scrollY,
-    left: rectangle.left + window.scrollX,
-    bottom: rectangle.bottom,
-    right: rectangle.right,
-    offsetTop: el.offsetTop,
-    offsetLeft: el.offsetLeft,
+  setter((draft) => {
+    Object.entries(rectangle).forEach(([key, val]) => {
+      if (typeof val === 'number') {
+        if (key === 'top') {
+          draft.top = val + window.scrollY;
+        } else if (key === 'left') {
+          draft.left = val + window.scrollX;
+        } else {
+          draft[key as keyof typeof draft] = val;
+        }
+      }
+    });
+    draft.offsetTop = el.offsetTop;
+    draft.offsetLeft = el.offsetLeft;
   });
 };
 export const Code: React.FC<CodeProps> = ({ children }) => {
@@ -195,16 +202,18 @@ export const Code: React.FC<CodeProps> = ({ children }) => {
   const { sourceStore, addSource, ActiveContext, SourceContext } = useContext(
     CodeContext,
   );
+  // TODO: This only works in React development. Hrm.
   const fileName = children._source
     ? relativeFileName(children._source.fileName)
     : '';
+
   const code = sourceStore[fileName] || null;
   const [html, setHtml] = useState(htmlPipeline(code));
   const { activeEl, setActive, addId, idLength } = useContext(ActiveContext);
   const { open, setCode } = useContext(SourceContext);
   const [id, setId] = useState('');
   const [treeDepth] = useState(() => getTreeDepth(children));
-  const [dimensions, setDimensions] = useState<Dimensions>({
+  const [dimensions, setDimensions] = useImmer<Dimensions>({
     width: 0,
     height: 0,
     top: 0,
@@ -214,6 +223,8 @@ export const Code: React.FC<CodeProps> = ({ children }) => {
     offsetTop: 0,
     offsetLeft: 0,
   });
+  const mountRef = useRef(true);
+  const resizeObserver = useRef<ResizeObserver | null>(null);
   const childRef = React.useRef<HTMLElement>(null);
   /** Math? */
   const something = Math.max(10, (Math.log(treeDepth) / 5) * 100);
@@ -258,28 +269,49 @@ export const Code: React.FC<CodeProps> = ({ children }) => {
 
   useLayoutEffect(() => {
     // Giving a little time for the drawer animation to complete before re-setting.
-    if (childRef.current instanceof Element) {
-      const el = childRef.current;
-      setTimeout(() => {
-        const rectangle = el.getBoundingClientRect();
-        if (
-          dimensions.width !== rectangle.width ||
-          dimensions.height !== rectangle.height ||
-          dimensions.left !== rectangle.left ||
-          dimensions.top !== rectangle.top
-        ) {
-          mapElement(el, rectangle, setDimensions);
+    if (childRef.current instanceof Element && !resizeObserver.current) {
+      resizeObserver.current = new ResizeObserver((entries) => {
+        const el = childRef.current;
+        for (const entry of entries) {
+          if (
+            el instanceof Element &&
+            (dimensions.width !== entry.contentRect.width ||
+              dimensions.height !== entry.contentRect.height ||
+              dimensions.left !== el.offsetLeft ||
+              dimensions.top !== el.offsetTop)
+          ) {
+            mapElement(
+              el,
+              {
+                height: entry.contentRect.height,
+                width: entry.contentRect.width,
+                top: el.offsetTop,
+                left: el.offsetLeft,
+              },
+              setDimensions,
+            );
+          }
         }
-      }, 0);
+      });
+      resizeObserver.current.observe(childRef.current);
     }
   }, [open, childRef, dimensions, setDimensions]);
-
+  useEffect(
+    () => () => {
+      mountRef.current = false;
+      if (resizeObserver.current) {
+        resizeObserver.current.disconnect();
+        resizeObserver.current = null;
+      }
+    },
+    [],
+  );
   return (
     <CodeChildren
       fileName={fileName}
-      data-z-index={zIndex}
+      data-z-index={isNaN(zIndex) ? 0 : zIndex}
       data-adjust={itemAdjust}
-      data-height={dimensions.height}
+      data-height={isNaN(dimensions.height) ? 0 : dimensions.height}
       data-width={dimensions.width}
       data-top={dimensions.top}
       data-left={dimensions.left}
