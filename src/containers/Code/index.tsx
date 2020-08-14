@@ -8,10 +8,12 @@ import React, {
   useLayoutEffect,
   useRef,
   useState,
+  useCallback,
 } from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { useImmer, Updater } from 'use-immer';
+import { debounce } from 'lodash-es';
 import {
   // cleanCode,
   cleanup,
@@ -267,11 +269,40 @@ export const Code: React.FC<CodeProps> = ({ children }) => {
     }
   }, [activeEl, id, setCode, fileName, html, code]);
 
+  const accurateMap = useCallback(
+    debounce(() => {
+      window.requestAnimationFrame(() => {
+        if (childRef.current instanceof Element) {
+          const rectangle = childRef.current.getBoundingClientRect();
+          const topDiff = Math.abs(rectangle.top - dimensions.top);
+          const leftDiff = Math.abs(rectangle.left - dimensions.left);
+          const widthDiff = Math.abs(rectangle.width - dimensions.width);
+          if (childRef.current.id === 'togglers') {
+            console.log(
+              JSON.stringify(rectangle),
+              JSON.stringify(dimensions),
+              topDiff,
+              leftDiff,
+              widthDiff,
+            );
+          }
+          if (topDiff > 15 || leftDiff > 15 || widthDiff > 25) {
+            mapElement(childRef.current, rectangle.toJSON(), setDimensions);
+          }
+        }
+      });
+    }, 100),
+    [dimensions, setDimensions],
+  );
+
   useLayoutEffect(() => {
     // Giving a little time for the drawer animation to complete before re-setting.
     if (childRef.current instanceof Element && !resizeObserver.current) {
       resizeObserver.current = new ResizeObserver((entries) => {
         const el = childRef.current;
+        if (el instanceof Element && el.id === 'togglers') {
+          console.log("resize observer doing it's thing");
+        }
         for (const entry of entries) {
           if (
             el instanceof Element &&
@@ -296,6 +327,17 @@ export const Code: React.FC<CodeProps> = ({ children }) => {
       resizeObserver.current.observe(childRef.current);
     }
   }, [open, childRef, dimensions, setDimensions]);
+  /**
+   * The previous method for getting `top` and `left` can be inaccurate, but is fast.
+   * Check dimensions and location again after all the big changes complete and get
+   * a more accurate reading.
+   */
+  useLayoutEffect(() => {
+    if (open && dimensions.height !== 0 && dimensions.width !== 0) {
+      accurateMap();
+    }
+  }, [open, dimensions, accurateMap]);
+
   useEffect(
     () => () => {
       mountRef.current = false;
