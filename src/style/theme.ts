@@ -3,7 +3,12 @@ import { createMuiTheme, colors } from '@material-ui/core';
 export type theme = ReturnType<typeof createMuiTheme>;
 export const DARK = 'dark';
 export const LIGHT = 'light';
-const printText = {
+const printTextGray = {
+  '@media print': {
+    color: '#212121',
+  },
+};
+const printTextBlack = {
   '@media print': {
     color: '#000000',
   },
@@ -39,9 +44,12 @@ const createTheme = (
         },
       },
       MuiTypography: {
-        root: printText,
-        colorTextPrimary: printText,
-        colorTextSecondary: printText,
+        root: printTextGray,
+        caption: printTextBlack,
+        h6: printTextBlack,
+        overline: printTextBlack,
+        colorTextPrimary: printTextBlack,
+        colorTextSecondary: printTextBlack,
         paragraph: {
           marginBottom: '0.8rem',
         },

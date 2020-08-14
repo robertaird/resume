@@ -6,6 +6,7 @@ import Code from 'containers/Code';
 type TypographyProps = React.ComponentProps<typeof Typography>;
 
 interface Props {
+  className?: string;
   title: React.ReactElement;
   date: React.ReactElement;
 }
@@ -20,10 +21,10 @@ const DateContainer = styled(Grid)`
 `;
 
 export const HeadingGrid = React.forwardRef<HTMLDivElement, Props>(
-  function HeadingGrid({ title, date }, ref) {
+  function HeadingGrid({ className, title, date }, ref) {
     return (
       <Code>
-        <Grid ref={ref} item container xs={12}>
+        <Grid className={className} ref={ref} item container xs={12}>
           <TitleContainer item container justify="flex-start">
             {React.cloneElement(title, {
               ...title.props,

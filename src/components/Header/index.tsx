@@ -35,6 +35,8 @@ const Name = styled(BaseName)`
 `;
 
 const SubtitleSVG = styled(BaseSubtitle)`
+  stroke: ${({ theme }) => theme.palette.primary.main};
+  stroke-width: 0.02rem;
   height: 1rem;
   width: unset;
 `;
@@ -58,14 +60,17 @@ const CardHeader = styled(MuiCardHeader)`
     padding: 6px 0 16px 6px;
     align-items: flex-end;
   }
+
   & .MuiCardHeader-title,
   & .MuiCardHeader-subheader {
     line-height: 0.95em;
   }
+
   & .MuiCardHeader-subheader {
     font-size: 0.9rem;
     text-indent: 0.5em;
   }
+
   & .MuiCardHeader-action {
     align-self: center;
   }
@@ -73,7 +78,7 @@ const CardHeader = styled(MuiCardHeader)`
 
 const subheaderProps = {
   variant: 'overline',
-  color: 'secondary',
+  color: 'primary',
   align: 'left',
 } as const;
 export const Header = React.forwardRef<HTMLDivElement, Props>(function Header(

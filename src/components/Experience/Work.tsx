@@ -22,6 +22,14 @@ const TitleTypography = styled(BaseHeadingTypography)`
   font-weight: 600;
 `;
 
+const DescriptionTypography = styled(Typography)`
+  padding: 0 0.5rem;
+`;
+
+const SubHeadingGrid = styled(HeadingGrid)`
+  padding-top: 0.5rem;
+`;
+
 export const Work = React.forwardRef<HTMLDivElement, Props>(function Work(
   {
     workItem: {
@@ -48,13 +56,13 @@ export const Work = React.forwardRef<HTMLDivElement, Props>(function Work(
           date={<NameTypography variant="caption">{topDates}</NameTypography>}
         />
         <Grid item container>
-          <Typography variant="subtitle2" align="left">
+          <DescriptionTypography variant="subtitle2" align="left">
             {topDescription}
-          </Typography>
+          </DescriptionTypography>
         </Grid>
         {positions.map(({ title, dates, accomplishments, description }) => (
           <React.Fragment key={`${name}-${title}-detail`}>
-            <HeadingGrid
+            <SubHeadingGrid
               title={
                 <TitleTypography variant="subtitle1" color="primary">
                   {title}

@@ -23,19 +23,8 @@ type HeaderDivProps = {
   'data-headerradius'?: headerRadiusOptions;
 };
 
-function setHeaderRadius(option?: headerRadiusOptions) {
-  switch (option) {
-    case 'none':
-      return '0';
-    case 'top':
-      return '2px 2px 0 0';
-    default:
-      return '2px';
-  }
-}
-
 const Grid = styled(MuiGrid)<GridProps>`
-  padding: ${(props) => props.padding || '2px 0 8px'};
+  padding: ${(props) => props.padding || '0.1rem 0 0.5rem'};
   height: max-content;
 `;
 

@@ -56,7 +56,7 @@ const Root = styled(Container)<{ open: boolean }>`
 const MainContent = styled.div<RootProps>`
   max-width: 68rem;
   padding: 20px;
-  flex-grow: 1;
+  flex: 4;
   display: grid;
   grid-gap: 0 2.5rem;
   grid-template-columns: 3fr minmax(200px, 1fr);
@@ -116,29 +116,23 @@ function Resume({ data, open: shouldOpen, code }: ResumeProps) {
             <Connect personal={data.personal} />
             <MainCol container item xs={12} md={9}>
               <Experience experience={data.experience} />
+              <RelatedExperience
+                otherExperience={data.experience.other}
+                headerRadius="none"
+              />
             </MainCol>
             <DetailsCol container item xs={12} md={3}>
               <Paper elevation={0}>
                 <About
                   personal={data.personal}
                   headerRadius="top"
-                  padding="0 0 8px;"
+                  padding="0 0 0.75rem;"
                 />
                 <Skills
                   professionalSkills={data.professionalSkills}
                   headerRadius="none"
-                  padding="2px 0 8px;"
                 />
-                <RelatedExperience
-                  otherExperience={data.experience.other}
-                  headerRadius="none"
-                  padding="2px 0 8px;"
-                />
-                <Education
-                  education={data.education}
-                  headerRadius="none"
-                  padding="2px 0 8px;"
-                />
+                <Education education={data.education} headerRadius="none" />
               </Paper>
             </DetailsCol>
           </MainContent>

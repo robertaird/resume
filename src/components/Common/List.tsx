@@ -4,10 +4,10 @@ import { Grid, Typography } from '@material-ui/core';
 import Code from 'containers/Code';
 
 type item = string | string[];
-type foobar = '';
 type items = item[];
 
 type Props = {
+  className?: string;
   /** Array consisting of either strings or arrays of strings */
   items: items;
   /** id for list items */
@@ -55,12 +55,12 @@ const mapItems = (items: items, id?: string) =>
   ));
 
 export const List = React.forwardRef<HTMLUListElement, Props>(function List(
-  { items, id },
+  { className, items, id },
   ref,
 ) {
   return (
     <Code>
-      <Grid ref={ref} item container component="ul">
+      <Grid ref={ref} className={className} item container component="ul">
         {mapItems(items, id)}
       </Grid>
     </Code>

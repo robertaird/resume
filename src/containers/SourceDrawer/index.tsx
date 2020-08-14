@@ -15,24 +15,25 @@ interface SourceDrawerProps {
 
 interface DrawerProps {
   'data-width': number;
+  'data-open': string;
 }
 
 const Drawer = styled(MuiDrawer)<DrawerProps>`
   text-align: left;
+  height: auto;
   min-width: ${(props) => props['data-width']}px;
+  flex: ${(props) => (props['data-open'] === 'true' ? '3' : '0')};
   flex-shrink: 0;
-  flex-grow: 1;
-  overflow: hidden;
+  overflow: visible;
   pointer-events: none;
   & .MuiPaper-root {
     height: 100vh;
-    position: sticky;
+    position: ${(props) =>
+      props['data-open'] === 'true' ? 'sticky' : 'fixed'};
     overflow: visible;
     top: 0;
     bottom: 0;
     z-index: 10000;
-    width: inherit;
-    min-width: ${(props) => props['data-width']}px;
     pointer-events: auto;
     pointer-events: default;
   }
@@ -48,6 +49,7 @@ const SourceDrawer: React.FC<SourceDrawerProps> = ({
 }) => {
   return (
     <Drawer
+      data-open={open ? 'true' : ''}
       data-width={drawerWidth}
       open={open}
       anchor="right"

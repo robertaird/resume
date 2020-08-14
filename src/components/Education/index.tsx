@@ -1,7 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Grid, Typography } from '@material-ui/core';
-import { HeadingGrid, PaddedTypography, Section } from 'components/Common';
+import {
+  HeadingGridPadded,
+  PaddedTypography,
+  Section,
+} from 'components/Common';
 import Code from 'containers/Code';
 
 type SectionProps = Pick<
@@ -44,14 +48,7 @@ export const Education = React.forwardRef<HTMLDivElement, Props>(
                   {location}
                 </TitleTypography>
               </Grid>
-              <HeadingGrid
-                title={
-                  <PaddedTypography variant="body2">{program}</PaddedTypography>
-                }
-                date={
-                  <PaddedTypography variant="body2">{date}</PaddedTypography>
-                }
-              />
+              <HeadingGridPadded title={program} date={date} />
               <Grid item container xs={12}>
                 <PaddedTypography variant="caption" align="left">
                   {description}
