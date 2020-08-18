@@ -1,5 +1,19 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Custom webpack config (WIP):
+
+To enable the Code Inspector to work properly, add to your webpack config the \_\_NAME value as follows:
+
+```javascript
+ new webpack.DefinePlugin({...env.stringified,
+    __NAME: webpack.DefinePlugin.runtimeValue(
+    v => {
+      const res = v.module.resource;
+      return JSON.stringify(res); // Strings need to be wrapped in quotes
+    }, []
+  )}),
+```
+
 ## Available Scripts
 
 In the project directory, you can run:

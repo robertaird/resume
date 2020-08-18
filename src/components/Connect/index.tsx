@@ -127,7 +127,7 @@ export const Connect = React.forwardRef<HTMLDivElement, Props>(function Connect(
   ref,
 ) {
   return (
-    <Code>
+    <Code fileName={__NAME}>
       <Section outerRef={ref} headerRadius={headerRadius} padding={padding}>
         <Contact contact={contact} />
       </Section>

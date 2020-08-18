@@ -34,7 +34,7 @@ const Item = ({ item }: { item: otherItem }) => {
 export const RelatedExperience = React.forwardRef<HTMLDivElement, Props>(
   function RelatedExperience({ otherExperience, headerRadius, padding }, ref) {
     return (
-      <Code>
+      <Code fileName={__NAME}>
         <Section
           title="Related Experience"
           outerRef={ref}

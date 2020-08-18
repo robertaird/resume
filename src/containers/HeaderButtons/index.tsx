@@ -39,7 +39,7 @@ export const HeaderButtons = React.forwardRef<HTMLDivElement>(
     const { handleOpen } = useContext(SourceContext);
     const { toggleTheme } = useContext(ThemeContext);
     return (
-      <Code>
+      <Code fileName={__NAME}>
         <GridContainer ref={ref} id="togglers" container>
           <GridItem container item direction="column">
             <SwitchItem item>

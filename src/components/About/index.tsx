@@ -17,7 +17,7 @@ export const About = React.forwardRef<HTMLDivElement, Props>(function About(
   ref,
 ) {
   return (
-    <Code>
+    <Code fileName={__NAME}>
       <Section
         outerRef={ref}
         title="About"

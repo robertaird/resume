@@ -86,7 +86,7 @@ export const Header = React.forwardRef<HTMLDivElement, Props>(function Header(
   ref,
 ) {
   return (
-    <Code>
+    <Code fileName={__NAME}>
       <CardHeader
         ref={ref}
         avatar={

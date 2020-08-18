@@ -24,7 +24,7 @@ export const Skills = React.forwardRef<HTMLDivElement, Props>(function Skills(
   ref,
 ) {
   return (
-    <Code>
+    <Code fileName={__NAME}>
       <Section
         title="Technical Skills"
         outerRef={ref}

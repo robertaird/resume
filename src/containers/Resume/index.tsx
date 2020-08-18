@@ -107,9 +107,9 @@ function Resume({ data, open: shouldOpen, code }: ResumeProps) {
     };
   }, [animate]);
   return (
-    <Code>
-      <Root id="main-resume" className={theme.palette.type} open={open}>
-        <ActiveProvider disabled={!open}>
+    <ActiveProvider disabled={!open}>
+      <Code fileName={__NAME}>
+        <Root id="main-resume" className={theme.palette.type} open={open}>
           <MainContent data-shift={open} data-drawer-width={drawerWidth}>
             <HeaderButtons />
             <Header personal={data.personal} />
@@ -137,9 +137,9 @@ function Resume({ data, open: shouldOpen, code }: ResumeProps) {
             </DetailsCol>
           </MainContent>
           <SourceDrawer open={open} code={code} drawerWidth={drawerWidth} />
-        </ActiveProvider>
-      </Root>
-    </Code>
+        </Root>
+      </Code>
+    </ActiveProvider>
   );
 }
 

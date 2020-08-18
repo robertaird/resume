@@ -41,7 +41,7 @@ export const Work = React.forwardRef<HTMLDivElement, Props>(function Work(
   ref,
 ) {
   return (
-    <Code>
+    <Code fileName={__NAME}>
       <Grid ref={ref} container>
         <HeadingGrid
           title={

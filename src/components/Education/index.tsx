@@ -30,7 +30,7 @@ const TitleTypography = styled(Typography)`
 export const Education = React.forwardRef<HTMLDivElement, Props>(
   function Education({ education, headerRadius, padding }, ref) {
     return (
-      <Code>
+      <Code fileName={__NAME}>
         <Section
           title="Education"
           outerRef={ref}

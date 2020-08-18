@@ -5,7 +5,11 @@ export const removeFirstIndent = (code: string) =>
   code.replace(/^(?:\s\s)/gm, '');
 
 export const relativeFileName = (fileName: string) => {
-  return `src/${fileName.split('src/')[1]}`;
+  return `src/${
+    fileName.startsWith('./')
+      ? fileName.split('./')[1]
+      : fileName.split('src/')[1]
+  }`;
 };
 
 export function isSingleChild(

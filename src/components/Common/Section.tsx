@@ -70,7 +70,7 @@ const Header = ({ title, headerRadius }: HeaderProps) => {
 export const Section = React.forwardRef<HTMLDivElement, Props & HeaderProps>(
   function Section({ children, title, outerRef, padding, headerRadius }, ref) {
     return (
-      <Code>
+      <Code fileName={__NAME}>
         <Grid container ref={outerRef} padding={padding}>
           <Header title={title} headerRadius={headerRadius} />
           <BodyGrid

@@ -10,7 +10,7 @@ export const SpanNoWrap = React.forwardRef<
   { children: React.ReactNode; justify?: GridProps['justify'] }
 >(function SpanNoWrap({ children, justify = 'center' }, ref) {
   return (
-    <Code>
+    <Code fileName={__NAME}>
       <Grid ref={ref} item container xs="auto" justify={justify}>
         <Typography noWrap variant="body2" component="span">
           {children}

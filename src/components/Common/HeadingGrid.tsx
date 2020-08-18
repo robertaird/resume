@@ -23,7 +23,7 @@ const DateContainer = styled(Grid)`
 export const HeadingGrid = React.forwardRef<HTMLDivElement, Props>(
   function HeadingGrid({ className, title, date }, ref) {
     return (
-      <Code>
+      <Code fileName={__NAME}>
         <Grid className={className} ref={ref} item container xs={12}>
           <TitleContainer item container justify="flex-start">
             {React.cloneElement(title, {

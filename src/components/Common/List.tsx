@@ -59,7 +59,7 @@ export const List = React.forwardRef<HTMLUListElement, Props>(function List(
   ref,
 ) {
   return (
-    <Code>
+    <Code fileName={__NAME}>
       <Grid ref={ref} className={className} item container component="ul">
         {mapItems(items, id)}
       </Grid>
