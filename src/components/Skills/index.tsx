@@ -10,7 +10,7 @@ type SectionProps = Pick<
 >;
 
 type Props = {
-  professionalSkills: resume['professionalSkills'];
+  professionalSkills: import('types').skillsItem[];
 } & SectionProps &
   React.HTMLProps<HTMLDivElement>;
 

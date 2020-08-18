@@ -9,7 +9,7 @@ type SectionProps = Pick<
 >;
 
 interface Props extends React.HTMLProps<HTMLDivElement>, SectionProps {
-  personal: personal;
+  personal: import('types').personal;
 }
 
 export const About = React.forwardRef<HTMLDivElement, Props>(function About(

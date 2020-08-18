@@ -5,7 +5,7 @@ import { HeadingGrid, List } from 'components/Common';
 import Code from 'containers/Code';
 
 type Props = {
-  workItem: workItem;
+  workItem: import('types').workItem;
 } & React.HTMLProps<HTMLDivElement>;
 
 const BaseHeadingTypography = styled(Typography)`

@@ -11,7 +11,7 @@ type SectionProps = Pick<
   React.ComponentPropsWithoutRef<typeof Section>,
   'padding' | 'headerRadius'
 >;
-
+type otherItem = import('types').otherItem;
 type otherItems = otherItem[];
 type Props = {
   otherExperience: otherItems;

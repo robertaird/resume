@@ -4,7 +4,7 @@ import Work from './Work';
 import Code from 'containers/Code';
 
 type Props = {
-  experience: resume['experience'];
+  experience: import('types').experience;
 } & React.HTMLProps<HTMLDivElement>;
 
 export const Experience = React.forwardRef<HTMLDivElement, Props>(

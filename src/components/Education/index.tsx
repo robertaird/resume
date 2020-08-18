@@ -8,13 +8,14 @@ import {
 } from 'components/Common';
 import Code from 'containers/Code';
 
+type education = import('types').educationItem[];
 type SectionProps = Pick<
   React.ComponentPropsWithoutRef<typeof Section>,
   'padding' | 'headerRadius'
 >;
 
 type Props = {
-  education: resume['education'];
+  education: education;
 } & SectionProps &
   React.HTMLProps<HTMLDivElement>;
 

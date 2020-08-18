@@ -33,11 +33,12 @@ export const ThemeContext = createContext({
   toggleTheme: () => {},
 });
 
-const GlobalStyle = createGlobalStyle<{ theme: theme }>`
-      body {
-        background: ${(props) => props.theme.palette.background.default};
-          color: ${(props) => props.theme.palette.text.primary};
-        }
+type globalType = { theme: theme };
+const GlobalStyle = createGlobalStyle<globalType>`
+  body {
+    background: ${(props) => props.theme.palette.background.default};
+    color: ${(props) => props.theme.palette.text.primary};
+  }
 `;
 
 export const ThemeProvider = ({ children, disableResponsive }: ThemeProps) => {

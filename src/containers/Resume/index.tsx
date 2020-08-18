@@ -19,7 +19,7 @@ import Experience from 'components/Experience';
 import RelatedExperience from 'components/RelatedExperience';
 
 interface ResumeProps {
-  data: resume;
+  data: import('types').resume;
   code: import('containers/SourceProvider').code;
   open: boolean;
 }

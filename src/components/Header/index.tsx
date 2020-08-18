@@ -5,7 +5,7 @@ import { Name as BaseName, Subtitle as BaseSubtitle } from 'components/icons';
 import Code from 'containers/Code';
 
 interface Props {
-  personal: personal;
+  personal: import('types').personal;
   action?: React.ReactNode;
 }
 

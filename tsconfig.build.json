@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowJs": false,
+    "composite": false,
+    "declaration": true,
+    "declarationDir": "./build",
+    "emitDeclarationOnly": true,
+    "incremental": false,
+    "noEmit": false,
+    "skipLibCheck": true
+  },
+  "exclude": ["**/tests/"]
+}

@@ -5,6 +5,8 @@ import { Section } from 'components/Common';
 import { Github, LinkedIn, Email, LocationCity, Phone } from 'components/icons';
 import Code from 'containers/Code';
 
+type personal = import('types').personal;
+
 type SectionProps = Pick<
   React.ComponentPropsWithoutRef<typeof Section>,
   'padding' | 'headerRadius'
