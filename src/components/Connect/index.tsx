@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Grid, Link, Typography } from '@material-ui/core';
 import { Section } from 'components/Common';
-import { Github, LinkedIn, Email, LocationCity, Phone } from 'components/icons';
+import { Github, LinkedIn, Email, LocationCity, Phone } from 'components/svg';
 import Code from 'containers/Code';
 
 type personal = import('types').personal;

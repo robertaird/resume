@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import styled, { css } from 'styled-components';
 import { CardHeader as MuiCardHeader } from '@material-ui/core';
-import { Name as BaseName, Subtitle as BaseSubtitle } from 'components/icons';
+import { Name as BaseName, Subtitle as BaseSubtitle } from 'components/svg';
 import Code from 'containers/Code';
 
 interface Props {
