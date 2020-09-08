@@ -1,21 +1,52 @@
 /**
  * @module Code
- *
- * TODO: Display implementation of this component?
  */
-import React, { Fragment, useContext, useEffect, useState } from 'react';
-import Prism from '../../prism';
+import React, {
+  Fragment,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useCallback,
+} from 'react';
+import ReactDOM from 'react-dom';
 import styled from 'styled-components';
-import { ActiveContext } from 'containers/ActiveProvider';
-import { SourceContext } from 'containers/SourceDrawer';
+import { useImmer, Updater } from 'use-immer';
+import { debounce } from 'lodash-es';
+import {
+  // cleanCode,
+  cleanup,
+  calculateZIndex,
+  getTreeDepth,
+  parseStyled,
+  relativeFileName,
+  setChildrenProps,
+  // isSingleChild,
+  // removeFirstIndent,
+  // replaceSpan,
+} from './utils';
+import { CodeContext } from './context';
 
-interface Props {
-  code: string;
-  children: React.ReactElement;
+interface CodeChildren extends React.ReactElement {
+  _source?: {
+    fileName: string;
+  };
+}
+
+interface CodeProps {
+  children: CodeChildren;
+}
+
+interface HoverFilePathProps {
+  open: boolean;
+  width: number;
+  adjust: number;
 }
 
 interface HoverAreaProps {
-  'data-open': boolean;
+  open: boolean;
+  'data-z-index': number;
   'data-adjust': number;
   'data-width': number;
   'data-height': number;
@@ -25,7 +56,10 @@ interface HoverAreaProps {
   'data-right': number;
 }
 
-type CodeChildrenProps = { children: React.ReactNode } & HoverAreaProps;
+type CodeChildrenProps = {
+  children: React.ReactNode;
+  fileName: string;
+} & HoverAreaProps;
 
 interface Dimensions {
   height: number;
@@ -34,201 +68,189 @@ interface Dimensions {
   left: number;
   bottom: number;
   right: number;
-  // x: number;
-  // y: number;
+  offsetTop: number;
+  offsetLeft: number;
 }
 
-const HoverArea = styled.div<HoverAreaProps>`
-  pointer-events: ${props => (props['data-open'] ? 'auto' : 'none')};
+interface Translates {
+  translateX: number;
+  translateY: number;
+}
+
+const HoverPath = styled.h5.attrs((props: HoverFilePathProps) => ({
+  style: {
+    display: props.open ? '' : 'none',
+    width: props.width,
+    // marginLeft: -(props.adjust / 2),
+  },
+}))<HoverFilePathProps>`
+  position: absolute;
+  margin: 0;
+  max-width: 50vw;
+  top: 0;
+  left: 5px;
+  white-space: nowrap;
+  text-align: left;
+`;
+
+const HoverDiv = styled.div.attrs((props: HoverAreaProps) => ({
+  style: {
+    display: props.open ? '' : 'none',
+    // marginLeft: -(props['data-adjust'] / 2),
+    width: `calc(100% + ${props['data-adjust']}px)`,
+    // width: `calc(100% - ${props['data-adjust']}px)`,
+    height: props['data-height'],
+  },
+}))<HoverAreaProps>`
+  max-width: 100vw;
+  pointer-events: none;
+  border-radius: 4px;
+`;
+
+const HoverArea = styled.div.attrs((props: HoverAreaProps) => ({
+  style: {
+    pointerEvents: props['open'] ? 'auto' : 'none',
+    zIndex: props['data-z-index'],
+    transform: `translate(${props['data-left']}px, ${props['data-top']}px)`,
+    height: props['data-height'] - props['data-adjust'] / 2,
+    width: props['data-width'] - props['data-adjust'],
+    // top: props['data-top'] + props['data-adjust'],
+    // left: props['data-left'] + props['data-adjust'] * 1.5,
+    // right: props['data-right'] + props['data-adjust'],
+    // margin: -props['data-adjust'],
+  },
+}))<HoverAreaProps>`
+  transition: transform 300ms linear;
+  /* will-change: transform; */
   &:hover {
+  }
+  &:hover h5 {
+    font-style: italic;
   }
   &:hover div {
     background: #aaaaaa77;
-    border: 2px solid ${props => props.theme.palette.secondary.light};
+    border: 3px solid ${(props) => props.theme.palette.primary.light};
   }
   & div {
-    pointer-events: none;
+    border: 1px solid ${(props) => props.theme.palette.secondary.dark};
+    background: #aaaaaa22;
     border-radius: 4px;
-    width: calc(100% + ${props => 10 + props['data-adjust'] * 2}px);
-    height: calc(100% + ${props => 10 + props['data-adjust'] * 2}px);
-    margin-left: -${props => 5 + props['data-adjust']}px;
-    margin-top: -${props => 5 + props['data-adjust']}px;
+    margin-top: 0px;
   }
-  top: ${props => props['data-top']}px;
-  left: ${props => [props['data-left']]}px;
-  bottom: ${props => props['data-bottom']}px;
-  right: ${props => props['data-right']}px;
-  height: ${props => props['data-height'] - (20 - props['data-adjust'] * 2)}px;
-  width: ${props => props['data-width'] - (20 - props['data-adjust'] * 2)}px;
-  margin: ${props => 10 - props['data-adjust']}px;
-  z-index: ${props =>
-    100 -
-    props['data-adjust'] -
-    Math.max(0, Math.ceil(props['data-height'] / 5 / props['data-adjust']))};
   position: absolute;
 `;
 
-const replaceText = `import Code from 'containers/Code';\n// @ts-ignore\nimport txt from '!raw-loader!./index.tsx';\n`;
-
-const removeFirstIndent = (code: string) => code.replace(/^(?:\s\s)/gm, '');
-
-const relativeFileName = (fileName: string) => {
-  return `src/${fileName.split('src/')[1]}`;
-};
-
-/**
- * Removing all the extra stuff I added to the code to create the code
- * blocks.
- */
-const cleanCode = (code: string) => {
-  const initial = code.replace(/\r\n/gm, '\n').replace(replaceText, '');
-  const split = initial.split('Code');
-  split[1] = removeFirstIndent(split[1]);
-  return (
-    split
-      .map((section, i) => {
-        const lines = section.split('\n');
-        if (i !== 0) {
-          lines.splice(0, 1);
-        }
-        if (i !== split.length - 1) {
-          lines.splice(lines.length - 1, 1);
-        }
-        return lines.join('\n');
-      })
-      .join('\n') + '\n'
-  );
-};
-
-/**
- * I didn't see any instances of Prism highlighting two different languages
- * in the same block, so, doing it myself. I realize this is not going to be
- * super reliable for all use cases.
- * @param code
- * @param next
- */
-const parseStyled = (code: string, next?: number): string => {
-  const templateTag = '<span class="token string">`</span>';
-  // don't count the import statement
-  const initial = code.indexOf('styled-components') + 17;
-  const startIndex = (typeof next === 'number' ? next : initial) + 1;
-  // should probably check for index of 'styled.' or 'styled(' instead
-  const styledDeclaration = code.indexOf('styled', startIndex);
-  const templateStart = code.indexOf('`', styledDeclaration) + 1;
-  const templateEnd = code.indexOf('`', templateStart + 1);
-  if (styledDeclaration > -1 && templateStart > -1 && templateEnd > -1) {
-    return (
-      Prism.highlight(
-        code.substring(0, templateStart - 1),
-        Prism.languages.tsx,
-        'tsx',
-      ) +
-      templateTag +
-      Prism.highlight(
-        code.substring(templateStart, templateEnd),
-        Prism.languages.css,
-        'css',
-      ) +
-      templateTag +
-      parseStyled(code.substring(templateEnd + 1))
-    );
-  } else {
-    return Prism.highlight(code, Prism.languages.tsx, 'tsx');
-  }
-};
-
-/**
- * Attempts to re-parse elements with the .plain-text class. Doesn't catch
- * a lot, but it's better.
- * @param el
- */
-const replaceSpan = (el: HTMLElement) => {
-  const stripped = el.innerText.replace(/ /g, '');
-  // arbitrary
-  if (stripped.length > 10) {
-    const round2 = Prism.highlight(el.innerText, Prism.languages.js, 'js');
-    el.innerHTML = round2;
-  }
-  return el;
-};
-
-/**
- * Prism is missing some of my code. This is my overkill solution for
- * getting it to take another look.
- * @param code
- */
-const cleanup = (code: string) => {
-  const div = document.createElement('div');
-  let plainTextNodes;
-  div.innerHTML = code;
-  plainTextNodes = div.getElementsByClassName('plain-text');
-  if (plainTextNodes.length) {
-    for (let i = 0; i < plainTextNodes.length; i++) {
-      replaceSpan(plainTextNodes[i] as HTMLElement);
-    }
-  }
-  return div.innerHTML;
-};
-
-/** Add props to the hover element */
-const setChildrenProps = (id: string, setActive: React.Dispatch<any>) => ({
-  onMouseOver: (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setActive(id);
-  },
-});
-
-/** Try to suss out approximately how high up the current child is in the tree */
-const getTreeDepth = (children: React.ReactElement, count = 0): number => {
-  let newCount = count;
-  if (children) {
-    newCount += React.Children.count(children);
-    if (children.props) {
-      newCount += getTreeDepth(children.props.children, newCount);
-    }
-  }
-  return newCount;
-};
-
+const mountNode = document.getElementById('root') as HTMLElement;
 /**
  * Little helper component to hold any refs passed to the Code component.
  */
 const CodeChildren = React.forwardRef(
   (
-    { children, ...props }: CodeChildrenProps,
+    { children, fileName, open, ...props }: CodeChildrenProps,
     ref: React.Ref<HTMLDivElement>,
   ) => (
     <Fragment>
-      <HoverArea ref={ref} {...props}>
-        <div />
-      </HoverArea>
+      {ReactDOM.createPortal(
+        <HoverArea ref={ref} open={open} {...props}>
+          <HoverPath
+            open={open}
+            width={props['data-width']}
+            adjust={props['data-adjust']}
+          >
+            {fileName}
+          </HoverPath>
+          <HoverDiv open={open} {...props} />
+        </HoverArea>,
+        mountNode,
+      )}
       {children}
     </Fragment>
   ),
 );
 
-// TODO: Store formatted text by filename?
-export const Code: React.FC<Props> = ({ code, children }) => {
-  // @ts-ignore
+const htmlPipeline = (code: string | null) => cleanup(parseStyled(code));
+
+const mapElement = (
+  el: HTMLElement,
+  rectangle: Partial<DOMRect>,
+  setter: Updater<Dimensions>,
+) => {
+  setter((draft) => {
+    Object.entries(rectangle).forEach(([key, val]) => {
+      if (typeof val === 'number') {
+        if (key === 'top') {
+          draft.top = val + window.scrollY;
+        } else if (key === 'left') {
+          draft.left = val + window.scrollX;
+        } else {
+          draft[key as keyof typeof draft] = val;
+        }
+      }
+    });
+    draft.offsetTop = el.offsetTop;
+    draft.offsetLeft = el.offsetLeft;
+  });
+};
+export const Code: React.FC<CodeProps> = ({ children }) => {
+  /**
+   * TODO: ActiveContext and SourceContet are kind of confusing. One of them
+   * TODO: tracks the element and the other the code string.
+   * TODO: Does this really make sense?
+   *
+   * It might just need a logic cleanup.
+   * Maybe ActiveContext becomes ActiveElementContext, and SourceContext becomes
+   * ActiveSourceContext.
+   */
+  const { sourceStore, addSource, ActiveContext, SourceContext } = useContext(
+    CodeContext,
+  );
+  // TODO: This only works in React development. Hrm.
   const fileName = children._source
-    ? // It really doesn't like me using source.
-      // @ts-ignore
-      relativeFileName(children._source.fileName)
+    ? relativeFileName(children._source.fileName)
     : '';
-  const [html] = useState(cleanup(parseStyled(cleanCode(code))));
+
+  const code = sourceStore[fileName] || null;
+  const [html, setHtml] = useState(htmlPipeline(code));
   const { activeEl, setActive, addId, idLength } = useContext(ActiveContext);
   const { open, setCode } = useContext(SourceContext);
   const [id, setId] = useState('');
-  const [treeDepth] = useState(getTreeDepth(children));
-  const [dimensions, setDimensions] = useState<Dimensions>({
+  const [treeDepth] = useState(() => getTreeDepth(children));
+  const [dimensions, setDimensions] = useImmer<Dimensions>({
     width: 0,
     height: 0,
     top: 0,
     left: 0,
     bottom: 0,
     right: 0,
+    offsetTop: 0,
+    offsetLeft: 0,
   });
+  const mountRef = useRef(true);
+  const resizeObserver = useRef<ResizeObserver | null>(null);
   const childRef = React.useRef<HTMLElement>(null);
+  /** Math? */
+  const something = Math.max(10, (Math.log(treeDepth) / 5) * 100);
+  const itemAdjust = Math.abs(
+    something + ((-0.8 - something) / (1 + treeDepth / 5)) * 1.5,
+  );
+  const zIndex = calculateZIndex(
+    dimensions.height,
+    dimensions.offsetTop,
+    dimensions.offsetLeft,
+    Math.max(2, treeDepth),
+  );
+
+  useEffect(() => {
+    if (fileName.endsWith('.tsx') && !sourceStore[fileName]) {
+      /** Dynamic importing. Yusssssss */
+      import(
+        `!raw-loader!../../../${fileName.substring(0, fileName.length - 4)}.tsx`
+      ).then(({ default: txt }) => {
+        addSource(fileName, txt);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fileName, sourceStore]);
 
   useEffect(() => {
     if (!id) {
@@ -238,44 +260,106 @@ export const Code: React.FC<Props> = ({ code, children }) => {
   }, [id, setId, addId, idLength]);
 
   useEffect(() => {
-    // setOpen(activeEl === id);
     if (activeEl === id) {
-      setCode({ fileName, html });
-    }
-  }, [activeEl, id, setCode, fileName, html]);
-
-  useEffect(() => {
-    // Giving a little time for the drawer animation to complete before re-setting.
-    setTimeout(() => {
-      if (childRef.current instanceof Element) {
-        const rectangle = childRef.current.getBoundingClientRect();
-        if (
-          dimensions.width !== rectangle.width ||
-          dimensions.height !== rectangle.height
-        ) {
-          setDimensions({
-            width: rectangle.width,
-            height: rectangle.height,
-            top: rectangle.top,
-            left: rectangle.left,
-            bottom: rectangle.bottom,
-            right: rectangle.right,
-          });
-        }
+      if (html !== null) {
+        setCode({ fileName, html });
+      } else if (code !== null) {
+        setHtml(htmlPipeline(code));
       }
-    }, 200);
-  }, [open, childRef, dimensions, setDimensions]);
+    }
+  }, [activeEl, id, setCode, fileName, html, code]);
 
+  const accurateMap = useCallback(
+    debounce(() => {
+      window.requestAnimationFrame(() => {
+        if (childRef.current instanceof Element) {
+          const rectangle = childRef.current.getBoundingClientRect();
+          const topDiff = Math.abs(rectangle.top - dimensions.top);
+          const leftDiff = Math.abs(rectangle.left - dimensions.left);
+          const widthDiff = Math.abs(rectangle.width - dimensions.width);
+          if (childRef.current.id === 'togglers') {
+            console.log(
+              JSON.stringify(rectangle),
+              JSON.stringify(dimensions),
+              topDiff,
+              leftDiff,
+              widthDiff,
+            );
+          }
+          if (topDiff > 15 || leftDiff > 15 || widthDiff > 25) {
+            mapElement(childRef.current, rectangle.toJSON(), setDimensions);
+          }
+        }
+      });
+    }, 100),
+    [dimensions, setDimensions],
+  );
+
+  useLayoutEffect(() => {
+    // Giving a little time for the drawer animation to complete before re-setting.
+    if (childRef.current instanceof Element && !resizeObserver.current) {
+      resizeObserver.current = new ResizeObserver((entries) => {
+        const el = childRef.current;
+        if (el instanceof Element && el.id === 'togglers') {
+          console.log("resize observer doing it's thing");
+        }
+        for (const entry of entries) {
+          if (
+            el instanceof Element &&
+            (dimensions.width !== entry.contentRect.width ||
+              dimensions.height !== entry.contentRect.height ||
+              dimensions.left !== el.offsetLeft ||
+              dimensions.top !== el.offsetTop)
+          ) {
+            mapElement(
+              el,
+              {
+                height: entry.contentRect.height,
+                width: entry.contentRect.width,
+                top: el.offsetTop,
+                left: el.offsetLeft,
+              },
+              setDimensions,
+            );
+          }
+        }
+      });
+      resizeObserver.current.observe(childRef.current);
+    }
+  }, [open, childRef, dimensions, setDimensions]);
+  /**
+   * The previous method for getting `top` and `left` can be inaccurate, but is fast.
+   * Check dimensions and location again after all the big changes complete and get
+   * a more accurate reading.
+   */
+  useLayoutEffect(() => {
+    if (open && dimensions.height !== 0 && dimensions.width !== 0) {
+      accurateMap();
+    }
+  }, [open, dimensions, accurateMap]);
+
+  useEffect(
+    () => () => {
+      mountRef.current = false;
+      if (resizeObserver.current) {
+        resizeObserver.current.disconnect();
+        resizeObserver.current = null;
+      }
+    },
+    [],
+  );
   return (
     <CodeChildren
-      data-adjust={treeDepth}
-      data-height={dimensions.height}
+      fileName={fileName}
+      data-z-index={isNaN(zIndex) ? 0 : zIndex}
+      data-adjust={itemAdjust}
+      data-height={isNaN(dimensions.height) ? 0 : dimensions.height}
       data-width={dimensions.width}
       data-top={dimensions.top}
       data-left={dimensions.left}
       data-bottom={dimensions.bottom}
       data-right={dimensions.right}
-      data-open={open}
+      open={open}
       {...setChildrenProps(id, setActive)}
     >
       {React.cloneElement(children, {

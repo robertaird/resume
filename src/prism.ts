@@ -6,7 +6,7 @@ import 'prismjs/components/prism-css-extras';
 import 'prismjs/plugins/highlight-keywords/prism-highlight-keywords';
 import 'prismjs/plugins/custom-class/prism-custom-class';
 
-Prism.plugins.customClass.map(function(className: string, language: string) {
+Prism.plugins.customClass.map(function (className: string, language: string) {
   if (language === 'css') {
     return `${className}.css`;
   } else {

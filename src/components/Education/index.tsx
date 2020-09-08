@@ -1,10 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Grid, Typography } from '@material-ui/core';
-import { PaddedTypography, Section } from 'components/Common';
+import {
+  HeadingGridPadded,
+  PaddedTypography,
+  Section,
+} from 'components/Common';
 import Code from 'containers/Code';
-// @ts-ignore
-import txt from '!raw-loader!./index.tsx';
 
 type SectionProps = Pick<
   React.ComponentPropsWithoutRef<typeof Section>,
@@ -25,9 +27,9 @@ const TitleTypography = styled(Typography)`
 `;
 
 export const Education = React.forwardRef<HTMLDivElement, Props>(
-  ({ education, headerRadius, padding }, ref) => {
+  function Education({ education, headerRadius, padding }, ref) {
     return (
-      <Code code={txt}>
+      <Code>
         <Section
           title="Education"
           outerRef={ref}
@@ -46,16 +48,7 @@ export const Education = React.forwardRef<HTMLDivElement, Props>(
                   {location}
                 </TitleTypography>
               </Grid>
-              <Grid item container xs={8}>
-                <PaddedTypography variant="body2" align="left">
-                  {program}
-                </PaddedTypography>
-              </Grid>
-              <Grid item container xs={4} justify="flex-end">
-                <PaddedTypography variant="body2" align="right">
-                  {date}
-                </PaddedTypography>
-              </Grid>
+              <HeadingGridPadded title={program} date={date} />
               <Grid item container xs={12}>
                 <PaddedTypography variant="caption" align="left">
                   {description}

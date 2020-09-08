@@ -1,24 +1,40 @@
 import React from 'react';
 import { Grid } from '@material-ui/core';
-import { PaddedTypography, Section } from 'components/Common';
+import {
+  HeadingGridPadded,
+  PaddedTypography,
+  Section,
+} from 'components/Common';
 import Code from 'containers/Code';
-// @ts-ignore
-import txt from '!raw-loader!./index.tsx';
 
 type SectionProps = Pick<
   React.ComponentPropsWithoutRef<typeof Section>,
   'padding' | 'headerRadius'
 >;
 
+type otherItems = otherItem[];
 type Props = {
-  otherExperience: resume['experience']['other'];
+  otherExperience: otherItems;
 } & SectionProps &
   React.HTMLProps<HTMLDivElement>;
 
-export const RelatedExperience = React.forwardRef<HTMLDivElement, Props>(
-  ({ otherExperience, headerRadius, padding }, ref) => {
+const Item = ({ item }: { item: otherItem }) => {
+  if (typeof item === 'string') {
     return (
-      <Code code={txt}>
+      <PaddedTypography paragraph variant="body2" align="left">
+        {item}
+      </PaddedTypography>
+    );
+  }
+  return (
+    <HeadingGridPadded paragraph title={item.description} date={item.date} />
+  );
+};
+
+export const RelatedExperience = React.forwardRef<HTMLDivElement, Props>(
+  function RelatedExperience({ otherExperience, headerRadius, padding }, ref) {
+    return (
+      <Code>
         <Section
           title="Related Experience"
           outerRef={ref}
@@ -27,9 +43,7 @@ export const RelatedExperience = React.forwardRef<HTMLDivElement, Props>(
         >
           {otherExperience.map((item, i) => (
             <Grid key={`skills-${i}`} item container direction="row">
-              <PaddedTypography paragraph variant="body2" align="left">
-                {item}
-              </PaddedTypography>
+              <Item item={item} />
             </Grid>
           ))}
         </Section>

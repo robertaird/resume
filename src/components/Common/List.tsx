@@ -1,16 +1,29 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Grid, Typography } from '@material-ui/core';
+import Code from 'containers/Code';
 
-interface Props {
+type item = string | string[];
+type items = item[];
+
+type Props = {
+  className?: string;
   /** Array consisting of either strings or arrays of strings */
-  items: (string | string[])[];
+  items: items;
   /** id for list items */
   id?: string;
-}
+};
 
-const ListTypography = styled(Typography)`
+type ItemsProps = {
+  item: item;
+  id?: string;
+};
+
+const ListTypography: typeof Typography = styled(Typography)`
   width: 100%;
+  &:not(:last-child) {
+    padding-bottom: 0.5rem;
+  }
 `;
 
 export const ListItem: React.FC = ({ children }) => (
@@ -19,28 +32,37 @@ export const ListItem: React.FC = ({ children }) => (
   </ListTypography>
 );
 
-export const List: React.FC<Props> = ({ items, id }) => (
-  <Grid item container component="ul">
-    {items.map((item, i) => {
-      if (Array.isArray(item)) {
-        const [firstItem, ...rest] = item;
-        return (
-          <ListItem key={`${id}-item-${i}`}>
-            {firstItem}
-            <ListTypography
-              key={`${id}-item-${i}-ul`}
-              component="ul"
-              variant="body2"
-              align="left"
-            >
-              {rest.map((sub, j) => (
-                <ListItem key={`${id}-subItem-${j}`}>{sub}</ListItem>
-              ))}
-            </ListTypography>
-          </ListItem>
-        );
-      }
-      return <ListItem key={`${id}-item-${i}`}>{item}</ListItem>;
-    })}
-  </Grid>
-);
+const Items = ({ item, id }: ItemsProps) => {
+  if (Array.isArray(item)) {
+    const [firstItem, ...rest] = item;
+    return (
+      <ListItem>
+        {firstItem}
+        <ListTypography component="ul" variant="body2" align="left">
+          {rest.map((sub, j) => (
+            <ListItem key={`${id}-subItem-${j}`}>{sub}</ListItem>
+          ))}
+        </ListTypography>
+      </ListItem>
+    );
+  }
+  return <ListItem>{item}</ListItem>;
+};
+
+const mapItems = (items: items, id?: string) =>
+  items.map((item, i) => (
+    <Items key={`item-${id}-${i.toString()}`} item={item} id={id} />
+  ));
+
+export const List = React.forwardRef<HTMLUListElement, Props>(function List(
+  { className, items, id },
+  ref,
+) {
+  return (
+    <Code>
+      <Grid ref={ref} className={className} item container component="ul">
+        {mapItems(items, id)}
+      </Grid>
+    </Code>
+  );
+});

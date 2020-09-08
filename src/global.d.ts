@@ -1,12 +1,8 @@
-/* eslint-disable @typescript-eslint/prefer-interface */
 type personal = {
   firstName: string;
   lastName: string;
-  location: string;
   title: string;
-  phone: string;
-  email: string;
-  links: string[][];
+  contact: string[][];
   about: string[];
 };
 
@@ -27,6 +23,13 @@ type workItem = {
   positions: position[];
 };
 
+type otherItem =
+  | string
+  | {
+      description: string;
+      date: string;
+    };
+
 type educationItem = {
   location: string;
   program: string;
@@ -39,11 +42,14 @@ type skillsItem = {
   skills: string[];
 };
 
+type itemTypes = string | (string | string[])[];
+type base = Record<string, itemTypes>;
 type resume = {
+  backups: Record<string, base | itemTypes>;
   personal: personal;
   experience: {
     work: workItem[];
-    other: string[];
+    other: otherItem[];
   };
   professionalSkills: skillsItem[];
   education: educationItem[];

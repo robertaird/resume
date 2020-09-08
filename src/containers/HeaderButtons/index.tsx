@@ -1,19 +1,19 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { Grid, Typography, Switch as MuiSwitch } from '@material-ui/core';
-import { SourceContext } from 'containers/SourceDrawer';
+import { SourceContext } from 'containers/SourceProvider';
 import { ThemeContext } from 'containers/ThemeProvider';
 import Code from 'containers/Code';
-// @ts-ignore
-import txt from '!raw-loader!./index.tsx';
 
 const Switch = styled(MuiSwitch)`
-  z-index: 100;
+  z-index: 1000;
 `;
 
 const GridContainer = styled(Grid)`
+  grid-column: 1/-1;
   width: 200px;
-  margin-top: 16px;
+  margin-left: auto;
+  margin-bottom: 16px;
 `;
 
 const GridItem = styled(Grid)`
@@ -34,33 +34,37 @@ const SwitchTypography = styled(Typography)`
   }
 `;
 
-export const HeaderButtons = () => {
-  const { handleOpen } = useContext(SourceContext);
-  const { toggleTheme } = useContext(ThemeContext);
-  return (
-    <GridContainer container>
-      <GridItem container item direction="column">
-        <SwitchItem item>
-          <Switch size="small" onChange={handleOpen} />
-        </SwitchItem>
-        <Grid item>
-          <SwitchTypography color="textSecondary" variant="caption">
-            Toggle Inspector
-          </SwitchTypography>
-        </Grid>
-      </GridItem>
-      <GridItem container item direction="column">
-        <SwitchItem item>
-          <Switch size="small" onChange={toggleTheme} />
-        </SwitchItem>
-        <Grid item>
-          <SwitchTypography color="textSecondary" variant="caption">
-            Toggle Theme
-          </SwitchTypography>
-        </Grid>
-      </GridItem>
-    </GridContainer>
-  );
-};
+export const HeaderButtons = React.forwardRef<HTMLDivElement>(
+  function HeaderButtons(_props, ref) {
+    const { handleOpen } = useContext(SourceContext);
+    const { toggleTheme } = useContext(ThemeContext);
+    return (
+      <Code>
+        <GridContainer ref={ref} id="togglers" container>
+          <GridItem container item direction="column">
+            <SwitchItem item>
+              <Switch size="small" onChange={handleOpen} />
+            </SwitchItem>
+            <Grid item>
+              <SwitchTypography color="textSecondary" variant="caption">
+                Code Inspector
+              </SwitchTypography>
+            </Grid>
+          </GridItem>
+          <GridItem container item direction="column">
+            <SwitchItem item>
+              <Switch id="toggle-theme" size="small" onChange={toggleTheme} />
+            </SwitchItem>
+            <Grid item>
+              <SwitchTypography color="textSecondary" variant="caption">
+                Theme
+              </SwitchTypography>
+            </Grid>
+          </GridItem>
+        </GridContainer>
+      </Code>
+    );
+  },
+);
 
 export default HeaderButtons;
