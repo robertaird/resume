@@ -1,31 +1,14 @@
 import React, { Fragment } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { CardHeader as MuiCardHeader } from '@material-ui/core';
 import { Name as BaseName, Subtitle as BaseSubtitle } from 'components/svg';
+import { InvisiText } from 'components/Common';
 import Code from 'containers/Code';
 
 interface Props {
   personal: import('types').personal;
   action?: React.ReactNode;
 }
-
-type InvisiTextProps = {
-  top?: string;
-};
-
-const InvisiText = styled.span<InvisiTextProps>`
-  ${({ top }) =>
-    top
-      ? css`
-          top: ${top}px;
-        `
-      : ''}
-  left: -2px;
-  font-weight: 800;
-  font-size: 1.2rem;
-  position: absolute;
-  color: transparent;
-`;
 
 const Name = styled(BaseName)`
   width: -webkit-fill-available;

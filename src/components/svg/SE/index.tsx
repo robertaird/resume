@@ -1,5 +1,5 @@
 import React from 'react';
-import { SvgIcon } from '@material-ui/core';
+import { SvgIcon } from '../Common/BaseExperienceSvg';
 
 export const LinkedInIcon: React.FC<React.ComponentProps<typeof SvgIcon>> = (
   props,

@@ -316,9 +316,6 @@ export const Code: React.FC<CodeProps> = React.memo(
       if (childRef.current instanceof Element && !resizeObserver.current) {
         resizeObserver.current = new ResizeObserver((entries) => {
           const el = childRef.current;
-          if (el instanceof Element && el.id === 'togglers') {
-            console.log("resize observer doing it's thing");
-          }
           for (const entry of entries) {
             if (
               el instanceof Element &&

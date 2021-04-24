@@ -1,7 +1,9 @@
 @media print {
-  /** Seitenränder einstellen */
   @page {
-    margin: 2cm;
+    margin: 0;
+  }
+  html {
+    font-size: 11pt;
   }
   body {
     background: #fff !important;
@@ -37,7 +39,6 @@
     page-break-before: avoid;
   }
 
-  /* Linkfarbe und Linkverhalten darstellen */
   a:link,
   a:visited,
   a {

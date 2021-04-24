@@ -1,12 +1,34 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import { Grid, Typography } from '@material-ui/core';
-import { HeadingGrid, List } from 'components/Common';
+import { HeadingGrid, List, InvisiText } from 'components/Common';
+import { AugAug, FebAug, SE, JSE } from 'components/svg';
+import * as TXT from './constants';
 import Code from 'containers/Code';
 
 type Props = {
   workItem: import('types').workItem;
 } & React.HTMLProps<HTMLDivElement>;
+
+type SvgCompProps = {
+  Svg: JSX.Element;
+  text: string;
+};
+
+const SvgComp = ({ Svg, text }: SvgCompProps) => (
+  <Fragment>
+    {Svg}
+    <InvisiText>{text}</InvisiText>
+  </Fragment>
+);
+
+// Not my favorite solution for a thing.
+const SvgComps = {
+  [TXT.JSE]: <SvgComp Svg={<JSE />} text={TXT.JSE} />,
+  [TXT.FEB_AUG]: <SvgComp Svg={<FebAug />} text={TXT.FEB_AUG} />,
+  [TXT.SE]: <SvgComp Svg={<SE />} text={TXT.SE} />,
+  [TXT.AUG_AUG]: <SvgComp Svg={<AugAug />} text={TXT.AUG_AUG} />,
+};
 
 const BaseHeadingTypography = styled(Typography)`
   font-size: 0.9rem;
@@ -18,7 +40,6 @@ const NameTypography = styled(BaseHeadingTypography)`
 `;
 
 const TitleTypography = styled(BaseHeadingTypography)`
-  font-variant: unicase;
   font-weight: 600;
 `;
 
@@ -65,12 +86,16 @@ export const Work = React.forwardRef<HTMLDivElement, Props>(function Work(
             <SubHeadingGrid
               title={
                 <TitleTypography variant="subtitle1" color="primary">
-                  {title}
+                  {title in SvgComps
+                    ? SvgComps[title as keyof typeof SvgComps]
+                    : title}
                 </TitleTypography>
               }
               date={
                 <TitleTypography variant="subtitle1" color="primary">
-                  {dates}
+                  {dates && dates in SvgComps
+                    ? SvgComps[dates as keyof typeof SvgComps]
+                    : dates}
                 </TitleTypography>
               }
             />

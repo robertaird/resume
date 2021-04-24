@@ -76,6 +76,9 @@ const RowItem = styled(BareRowItem)`
     && {
       max-width: fit-content;
       justify-content: center;
+      @media print {
+        justify-content: unset;
+      }
     }
   }
 `;

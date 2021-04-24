@@ -65,9 +65,13 @@ const MainContent = styled.div<RootProps>`
       theme.breakpoints.values.md - 1}px) {
     grid-template-columns: 1fr;
   }
-  /* will-change: margin-right; */
   margin-right: ${(props) =>
     props['data-shift'] ? 0 : -props['data-drawer-width']}px;
+  margin-left: ${(props) => (props['data-shift'] ? '0px' : '1rem')};
+  @media print {
+    margin-right: 0px;
+    margin-left: 0px;
+  }
 `;
 
 const Col = styled(Grid)`
