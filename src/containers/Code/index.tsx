@@ -314,29 +314,31 @@ export const Code: React.FC<CodeProps> = React.memo(
     useLayoutEffect(() => {
       // Giving a little time for the drawer animation to complete before re-setting.
       if (childRef.current instanceof Element && !resizeObserver.current) {
-        resizeObserver.current = new ResizeObserver((entries) => {
-          const el = childRef.current;
-          for (const entry of entries) {
-            if (
-              el instanceof Element &&
-              (dimensions.width !== entry.contentRect.width ||
-                dimensions.height !== entry.contentRect.height ||
-                dimensions.left !== el.offsetLeft ||
-                dimensions.top !== el.offsetTop)
-            ) {
-              mapElement(
-                el,
-                {
-                  height: entry.contentRect.height,
-                  width: entry.contentRect.width,
-                  top: el.offsetTop,
-                  left: el.offsetLeft,
-                },
-                setDimensions,
-              );
+        resizeObserver.current = new ResizeObserver(
+          (entries: ResizeObserverEntry[]) => {
+            const el = childRef.current;
+            for (const entry of entries) {
+              if (
+                el instanceof Element &&
+                (dimensions.width !== entry.contentRect.width ||
+                  dimensions.height !== entry.contentRect.height ||
+                  dimensions.left !== el.offsetLeft ||
+                  dimensions.top !== el.offsetTop)
+              ) {
+                mapElement(
+                  el,
+                  {
+                    height: entry.contentRect.height,
+                    width: entry.contentRect.width,
+                    top: el.offsetTop,
+                    left: el.offsetLeft,
+                  },
+                  setDimensions,
+                );
+              }
             }
-          }
-        });
+          },
+        );
         resizeObserver.current.observe(childRef.current);
       }
     }, [open, childRef, dimensions, setDimensions]);

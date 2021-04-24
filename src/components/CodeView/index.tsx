@@ -1,11 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Grid, Typography as MuiTypography } from '@material-ui/core';
+import {
+  Grid,
+  IconButton,
+  Typography as MuiTypography,
+} from '@material-ui/core';
+import {
+  Close as CloseIcon,
+  VerticalAlignBottom as VerticalAlignBottomIcon,
+} from '@material-ui/icons';
 
 interface Props {
   fileName: string;
   html: string;
-} // & React.HTMLProps<HTMLDivElement>;
+  setPosition: React.Dispatch<unknown>;
+}
 
 const RootGrid = styled(Grid)`
   white-space: pre;
@@ -33,16 +42,32 @@ const Typography: typeof MuiTypography = styled(MuiTypography)`
   color: ${(props) => props.theme.palette.primary.light};
 `;
 
-export const Experience: React.FC<Props> = ({ fileName, html: __html }) => {
+export const Experience: React.FC<Props> = ({
+  fileName,
+  html: __html,
+  setPosition,
+}) => {
   return (
     <RootGrid container direction="column">
-      <Grid item>
-        <Typography component="span">Code:</Typography>
-      </Grid>
-      <Grid item>
-        <Typography variant="caption" component="span">
-          {fileName}
-        </Typography>
+      <Grid container item alignItems="baseline">
+        <Grid item xs="auto">
+          <Typography component="span">File name: </Typography>
+        </Grid>
+        <Grid item xs>
+          <Typography variant="caption" component="span">
+            {fileName}
+          </Typography>
+        </Grid>
+        <Grid item xs="auto">
+          <IconButton size="small" onClick={setPosition}>
+            <VerticalAlignBottomIcon />
+          </IconButton>
+        </Grid>
+        <Grid item xs="auto">
+          <IconButton size="small">
+            <CloseIcon />
+          </IconButton>
+        </Grid>
       </Grid>
       <CodeGrid item>
         <div dangerouslySetInnerHTML={{ __html }} />

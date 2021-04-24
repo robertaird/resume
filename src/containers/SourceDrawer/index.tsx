@@ -2,7 +2,7 @@
  * @module SourceProvider
  * Provides the current active element to consumers, as well as the appropriate setters
  */
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Drawer as MuiDrawer } from '@material-ui/core';
 import CodeView from 'components/CodeView';
@@ -39,6 +39,7 @@ const Drawer = styled(MuiDrawer)<DrawerProps>`
   }
 `;
 
+// TODO: Make resizable https://stackoverflow.com/a/49560493
 const SourceDrawer: React.FC<SourceDrawerProps> = ({
   open,
   code = {
@@ -47,15 +48,26 @@ const SourceDrawer: React.FC<SourceDrawerProps> = ({
   },
   drawerWidth,
 }) => {
+  const [position, setPosition] = useState<'bottom' | 'right'>('right');
+
   return (
     <Drawer
       data-open={open ? 'true' : ''}
       data-width={drawerWidth}
       open={open}
-      anchor="right"
+      // TODO: Make re-positionable
+      anchor={position}
       variant="persistent"
     >
-      <CodeView html={code.html} fileName={code.fileName} />
+      <CodeView
+        setPosition={() =>
+          setPosition((currentPosition) =>
+            currentPosition === 'right' ? 'bottom' : 'right',
+          )
+        }
+        html={code.html}
+        fileName={code.fileName}
+      />
     </Drawer>
   );
 };
