@@ -5,12 +5,7 @@ module.exports = {
     useJSXTextNode: true,
   },
   plugins: ['prettier', 'react-hooks', 'jsx-a11y', 'import'],
-  extends: [
-    'react-app',
-    'plugin:prettier/recommended',
-    // "plugin:import/errors",
-    // "plugin:import/warnings",
-  ],
+  extends: ['react-app', 'plugin:prettier/recommended'],
   overrides: [
     {
       files: ['**/*.ts?(x)'],
@@ -29,7 +24,6 @@ module.exports = {
       extends: [
         'plugin:@typescript-eslint/recommended',
         'plugin:import/typescript',
-        'prettier/@typescript-eslint',
       ],
       // If adding a typescript-eslint version of an existing ESLint rule,
       // make sure to disable the ESLint rule here.
@@ -88,12 +82,6 @@ module.exports = {
     },
   ],
   rules: {
-    // "@typescript-eslint/no-object-literal-type-assertion": [
-    //   "error",
-    //   {
-    //     "allowAsParameter": true
-    //   }
-    // ],
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
     'import/no-webpack-loader-syntax': 0,
