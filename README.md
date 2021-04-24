@@ -2,9 +2,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Custom webpack config (WIP):
 
-To enable the Code Inspector to work properly, add to your webpack config the \_\_NAME value as follows:
+To enable the Code Inspector to work properly, add to the webpack config the \_\_NAME value as follows:
 
 ```javascript
+ // env.stringified is create-react-app's env
  new webpack.DefinePlugin({...env.stringified,
     __NAME: webpack.DefinePlugin.runtimeValue(
     v => {

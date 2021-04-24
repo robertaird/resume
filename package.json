@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@babel/core": "7.11.1",
+    "@craco/craco": "^6.1.1",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/styles": "^4.10.0",
@@ -25,13 +26,13 @@
     "prismjs": "^1.21.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "^4.0.0-next.77",
+    "react-scripts": "^4.0.3",
     "styled-components": "^5.1.1",
     "typescript": "^3.9.7",
     "use-immer": "^0.4.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "craco start",
     "build": "react-scripts build",
     "build:types": "tsc -p ./tsconfig.build.json",
     "test": "react-scripts test",
