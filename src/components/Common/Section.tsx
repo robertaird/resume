@@ -1,11 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Grid as MuiGrid, Typography } from '@material-ui/core';
+import { GridSpacing, Grid as MuiGrid, Typography } from '@material-ui/core';
 import Code from 'containers/Code';
 
 interface Props extends React.HTMLProps<HTMLDivElement> {
-  padding?: string;
   outerRef?: React.Ref<HTMLDivElement>;
+  padding?: string;
+  spacing?: GridSpacing;
 }
 
 type HeaderProps = {
@@ -57,7 +58,6 @@ const Header = ({ title, headerRadius }: HeaderProps) => {
   return (
     <HeaderDiv
       container
-      // justify="center"
       alignContent="flex-end"
       data-headerradius={headerRadius}
     >
@@ -68,7 +68,10 @@ const Header = ({ title, headerRadius }: HeaderProps) => {
   );
 };
 export const Section = React.forwardRef<HTMLDivElement, Props & HeaderProps>(
-  function Section({ children, title, outerRef, padding, headerRadius }, ref) {
+  function Section(
+    { children, title, outerRef, padding, headerRadius, spacing },
+    ref,
+  ) {
     return (
       <Code fileName={__NAME}>
         <Grid container ref={outerRef} padding={padding}>
@@ -79,6 +82,7 @@ export const Section = React.forwardRef<HTMLDivElement, Props & HeaderProps>(
             container
             alignItems="baseline"
             justify="center"
+            spacing={spacing}
           >
             {children}
           </BodyGrid>

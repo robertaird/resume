@@ -34,12 +34,15 @@ const BaseHeadingTypography = styled(Typography)`
   font-size: 0.9rem;
   line-height: 1.66;
 `;
+
 const NameTypography = styled(BaseHeadingTypography)`
   white-space: pre;
   font-weight: 600;
 `;
 
 const TitleTypography = styled(BaseHeadingTypography)`
+  // todo: some kind of something here
+  font-variant: unicase;
   font-weight: 600;
 `;
 
@@ -63,7 +66,7 @@ export const Work = React.forwardRef<HTMLDivElement, Props>(function Work(
 ) {
   return (
     <Code fileName={__NAME}>
-      <Grid ref={ref} container>
+      <Grid ref={ref} container item>
         <HeadingGrid
           title={
             <React.Fragment>
