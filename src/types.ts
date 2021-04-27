@@ -8,7 +8,7 @@ export type personal = {
 
 export type position = {
   title: string;
-  accomplishments: (string | string[])[];
+  accomplishments: ({ tag: string; description: string } | string | string[])[];
   dates?: string;
   description?: string;
 };

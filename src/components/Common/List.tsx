@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { Grid, Typography } from '@material-ui/core';
 import Code from 'containers/Code';
 
-type item = string | string[];
+type baseItem = { tag: string; description: string } | string;
+type item = baseItem | baseItem[];
 type items = item[];
 
 type Props = {
@@ -39,14 +40,17 @@ const Items = ({ item, id }: ItemsProps) => {
       <ListItem>
         {firstItem}
         <ListTypography component="ul" variant="body2" align="left">
-          {rest.map((sub, j) => (
-            <ListItem key={`${id}-subItem-${j}`}>{sub}</ListItem>
-          ))}
+          {rest.map((sub, j) =>
+            typeof sub === 'string' ? (
+              <ListItem key={`${id}-subItem-${j}`}>{sub}</ListItem>
+            ) : null,
+          )}
         </ListTypography>
       </ListItem>
     );
   }
-  return <ListItem>{item}</ListItem>;
+  // TODO : add `tag` check
+  return typeof item === 'string' ? <ListItem>{item}</ListItem> : null;
 };
 
 const mapItems = (items: items, id?: string) =>
