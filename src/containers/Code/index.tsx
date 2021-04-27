@@ -12,53 +12,30 @@ import React, {
   useCallback,
 } from 'react';
 import ReactDOM from 'react-dom';
-import styled from 'styled-components';
 import { useImmer, Updater } from 'use-immer';
 import { debounce } from 'lodash-es';
 import {
-  // cleanCode,
   cleanup,
   calculateZIndex,
   getTreeDepth,
   parseStyled,
   relativeFileName,
   setChildrenProps,
-  // isSingleChild,
-  // removeFirstIndent,
-  // replaceSpan,
 } from './utils';
 import { ActiveContext } from '../ActiveProvider';
 import { SourceContext } from '../SourceProvider';
 import { CodeContext } from './context';
+import { HoverArea, HoverAreaProps, HoverDiv, HoverPath } from './styles';
 
-interface CodeChildren extends React.ReactElement {
-  // React Dev only
+// Add React Dev only properties
+interface ReactElementDev extends React.ReactElement {
   _source?: {
     fileName: string;
   };
 }
-
 interface CodeProps {
-  children: CodeChildren;
+  children: ReactElementDev;
   fileName?: string;
-}
-
-interface HoverFilePathProps {
-  open: boolean;
-  width: number;
-  adjust: number;
-}
-
-interface HoverAreaProps {
-  open: boolean;
-  'data-z-index': number;
-  'data-adjust': number;
-  'data-width': number;
-  'data-height': number;
-  'data-top': number;
-  'data-left': number;
-  'data-bottom': number;
-  'data-right': number;
 }
 
 type CodeChildrenProps = {
@@ -76,74 +53,6 @@ interface Dimensions {
   offsetTop: number;
   offsetLeft: number;
 }
-
-interface Translates {
-  translateX: number;
-  translateY: number;
-}
-
-const HoverPath = styled.h5.attrs((props: HoverFilePathProps) => ({
-  style: {
-    display: props.open ? '' : 'none',
-    width: props.width,
-    // marginLeft: -(props.adjust / 2),
-  },
-}))<HoverFilePathProps>`
-  position: absolute;
-  margin: 0;
-  max-width: 50vw;
-  top: 0;
-  left: 5px;
-  white-space: nowrap;
-  text-align: left;
-`;
-
-const HoverDiv = styled.div.attrs((props: HoverAreaProps) => ({
-  style: {
-    display: props.open ? '' : 'none',
-    // marginLeft: -(props['data-adjust'] / 2),
-    width: `calc(100% + ${props['data-adjust']}px)`,
-    // width: `calc(100% - ${props['data-adjust']}px)`,
-    height: props['data-height'],
-  },
-}))<HoverAreaProps>`
-  max-width: 100vw;
-  pointer-events: none;
-  border-radius: 4px;
-`;
-
-const HoverArea = styled.div.attrs((props: HoverAreaProps) => ({
-  style: {
-    pointerEvents: props['open'] ? 'auto' : 'none',
-    zIndex: props['data-z-index'],
-    transform: `translate(${props['data-left']}px, ${props['data-top']}px)`,
-    height: props['data-height'] - props['data-adjust'] / 2,
-    width: props['data-width'] - props['data-adjust'],
-    // top: props['data-top'] + props['data-adjust'],
-    // left: props['data-left'] + props['data-adjust'] * 1.5,
-    // right: props['data-right'] + props['data-adjust'],
-    // margin: -props['data-adjust'],
-  },
-}))<HoverAreaProps>`
-  transition: transform 300ms linear;
-  /* will-change: transform; */
-  &:hover {
-  }
-  &:hover h5 {
-    font-style: italic;
-  }
-  &:hover div {
-    background: #aaaaaa77;
-    border: 3px solid ${(props) => props.theme.palette.primary.light};
-  }
-  & div {
-    border: 1px solid ${(props) => props.theme.palette.secondary.dark};
-    background: #aaaaaa22;
-    border-radius: 4px;
-    margin-top: 0px;
-  }
-  position: absolute;
-`;
 
 const mountNode = document.getElementById('root') as HTMLElement;
 /**
@@ -196,6 +105,7 @@ const mapElement = (
     draft.offsetLeft = el.offsetLeft;
   });
 };
+
 export const Code: React.FC<CodeProps> = React.memo(
   ({ children, fileName: passedFileName }) => {
     /**
@@ -240,6 +150,7 @@ export const Code: React.FC<CodeProps> = React.memo(
     const mountRef = useRef(true);
     const resizeObserver = useRef<ResizeObserver | null>(null);
     const childRef = React.useRef<HTMLElement>(null);
+
     /** Math? */
     const something = Math.max(10, (Math.log(treeDepth) / 5) * 100);
     const itemAdjust = Math.abs(
@@ -286,6 +197,7 @@ export const Code: React.FC<CodeProps> = React.memo(
     /* eslint-disable react-hooks/exhaustive-deps */
     const accurateMap = useCallback(
       debounce(() => {
+        /* eslint-enable */
         window.requestAnimationFrame(() => {
           if (childRef.current instanceof Element) {
             const rectangle = childRef.current.getBoundingClientRect();
@@ -309,7 +221,6 @@ export const Code: React.FC<CodeProps> = React.memo(
       }, 100),
       [dimensions, setDimensions],
     );
-    /* eslint-enable */
 
     useLayoutEffect(() => {
       // Giving a little time for the drawer animation to complete before re-setting.
@@ -343,7 +254,7 @@ export const Code: React.FC<CodeProps> = React.memo(
       }
     }, [open, childRef, dimensions, setDimensions]);
     /**
-     * The previous method for getting `top` and `left` can be inaccurate, but is fast.
+     * The previous method for getting `top` and `left` is inaccurate, but fast.
      * Check dimensions and location again after all the big changes complete and get
      * a more accurate reading.
      */
