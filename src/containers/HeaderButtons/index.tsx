@@ -1,38 +1,15 @@
 import React, { useContext } from 'react';
-import styled from 'styled-components';
-import { Grid, Typography, Switch as MuiSwitch } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import { SourceContext } from 'containers/SourceProvider';
 import { ThemeContext } from 'containers/ThemeProvider';
 import Code from 'containers/Code';
-
-const Switch = styled(MuiSwitch)`
-  z-index: 1000;
-`;
-
-const GridContainer = styled(Grid)`
-  grid-column: 1/-1;
-  width: 200px;
-  margin-left: auto;
-  margin-bottom: 16px;
-`;
-
-const GridItem = styled(Grid)`
-  width: 100px;
-  margin-top: 16px;
-`;
-
-const SwitchItem = styled(Grid)`
-  margin: -6px;
-  @media print {
-    display: none;
-  }
-`;
-
-const SwitchTypography = styled(Typography)`
-  @media print {
-    display: none;
-  }
-`;
+import {
+  GridContainer,
+  GridItem,
+  Switch,
+  SwitchItem,
+  SwitchTypography,
+} from './styles';
 
 export const HeaderButtons = React.forwardRef<HTMLDivElement>(
   function HeaderButtons(_props, ref) {
