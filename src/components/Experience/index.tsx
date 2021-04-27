@@ -11,7 +11,7 @@ export const Experience = React.forwardRef<HTMLDivElement, Props>(
   function Experience({ experience }, ref) {
     return (
       <Code fileName={__NAME}>
-        <Section title="Professional Experience" outerRef={ref}>
+        <Section title="Professional Experience" outerRef={ref} spacing={2}>
           {experience.work.map((workItem) => (
             <Work key={`${workItem.company.name}-comp`} workItem={workItem} />
           ))}
